@@ -1,0 +1,315 @@
+/* Путь: /home/zverev/sandbox/Electron/silero-tts-app/frontend/renderer/styles/main.css */
+:root {
+    --primary-color: #4a6bef;
+    --primary-hover: #3a5bdf;
+    --secondary-color: #e8eaf6;
+    --text-color: #333;
+    --background-color: #f9f9f9;
+    --panel-background: #ffffff;
+    --border-color: #ddd;
+    --success-color: #4caf50;
+    --error-color: #f44336;
+    --warning-color: #ff9800;
+  }
+  
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+  }
+  
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  h1 {
+    font-size: 24px;
+    font-weight: 500;
+  }
+  
+  .status-indicator {
+    display: flex;
+    align-items: center;
+  }
+  
+  .status-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 8px;
+  }
+  
+  .status-dot.online {
+    background-color: var(--success-color);
+  }
+  
+  .status-dot.offline {
+    background-color: var(--error-color);
+  }
+  
+  .settings-panel, .editor-panel, .control-panel, .player-panel {
+    background-color: var(--panel-background);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+  
+  .settings-panel {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  
+  .setting-group {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 150px;
+  }
+  
+  .setting-group label {
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+  
+  select, input, textarea {
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 14px;
+    outline: none;
+  }
+  
+  select:focus, input:focus, textarea:focus {
+    border-color: var(--primary-color);
+  }
+  
+  textarea {
+    width: 100%;
+    height: 200px;
+    resize: vertical;
+  }
+  
+  .editor-panel {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .tab-controls {
+    display: flex;
+    margin-bottom: 15px;
+  }
+  
+  .tab-btn {
+    background: none;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-color);
+    border-bottom: 2px solid transparent;
+  }
+  
+  .tab-btn.active {
+    border-bottom: 2px solid var(--primary-color);
+    color: var(--primary-color);
+  }
+  
+  .text-editor, .ssml-editor {
+    flex: 1;
+  }
+  
+  .ssml-help {
+    margin-top: 15px;
+    font-size: 12px;
+    padding: 10px;
+    background: var(--secondary-color);
+    border-radius: 4px;
+  }
+  
+  .ssml-help h3 {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+  
+  .ssml-help code {
+    font-family: monospace;
+    background: rgba(0, 0, 0, 0.05);
+    padding: 2px 4px;
+    border-radius: 3px;
+  }
+  
+  .control-panel {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+  
+  .player-panel {
+    text-align: center;
+  }
+  
+  .player-panel h2 {
+    font-size: 18px;
+    margin-bottom: 15px;
+  }
+  
+  .player-panel audio {
+    width: 100%;
+    margin-bottom: 15px;
+  }
+  
+  .player-controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+  }
+  
+  .primary-btn, .secondary-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .primary-btn {
+    background-color: var(--primary-color);
+    color: white;
+  }
+  
+  .primary-btn:hover {
+    background-color: var(--primary-hover);
+  }
+  
+  .primary-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+  
+  .secondary-btn {
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+  }
+  
+  .secondary-btn:hover {
+    background-color: #ddd;
+  }
+  
+  .hidden {
+    display: none;
+  }
+  
+  .notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 15px 20px;
+    background-color: var(--panel-background);
+    border-left: 4px solid var(--primary-color);
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: none;
+    z-index: 1000;
+    max-width: 400px;
+  }
+  
+  .notification.show {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .notification.error {
+    border-left-color: var(--error-color);
+  }
+  
+  .notification.success {
+    border-left-color: var(--success-color);
+  }
+  
+  #notification-close {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    margin-left: 10px;
+  }
+  
+  /* Switch для SSML */
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+  }
+  
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+  }
+  
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+  }
+  
+  input:checked + .slider {
+    background-color: var(--primary-color);
+  }
+  
+  input:focus + .slider {
+    box-shadow: 0 0 1px var(--primary-color);
+  }
+  
+  input:checked + .slider:before {
+    transform: translateX(26px);
+  }
+  
+  .slider.round {
+    border-radius: 24px;
+  }
+  
+  .slider.round:before {
+    border-radius: 50%;
+  }

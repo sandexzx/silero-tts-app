@@ -1,0 +1,97 @@
+<!-- Путь: /home/zverev/sandbox/Electron/silero-tts-app/frontend/renderer/index.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Silero TTS App</title>
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Silero TTS</h1>
+      <div class="status-indicator">
+        <span class="status-dot offline"></span>
+        <span id="status-text">Проверка соединения...</span>
+      </div>
+    </header>
+    
+    <main>
+      <div class="settings-panel">
+        <div class="setting-group">
+          <label for="speaker-select">Голос:</label>
+          <select id="speaker-select" disabled>
+            <option value="loading">Загрузка...</option>
+          </select>
+        </div>
+        
+        <div class="setting-group">
+          <label for="sample-rate-select">Частота дискретизации:</label>
+          <select id="sample-rate-select">
+            <option value="8000">8 кГц</option>
+            <option value="24000">24 кГц</option>
+            <option value="48000" selected>48 кГц</option>
+          </select>
+        </div>
+        
+        <div class="setting-group">
+          <label for="ssml-toggle">Использовать SSML:</label>
+          <label class="switch">
+            <input type="checkbox" id="ssml-toggle">
+            <span class="slider round"></span>
+          </label>
+        </div>
+      </div>
+      
+      <div class="editor-panel">
+        <div class="tab-controls">
+          <button id="tab-text" class="tab-btn active">Текст</button>
+          <button id="tab-ssml" class="tab-btn">SSML</button>
+        </div>
+        
+        <div class="text-editor" id="text-editor">
+          <textarea id="text-input" placeholder="Введите текст для синтеза..."></textarea>
+        </div>
+        
+        <div class="ssml-editor hidden" id="ssml-editor">
+          <textarea id="ssml-input" placeholder="Введите текст с SSML-разметкой..."><speak>Привет! <break time='500ms'/> Это <emphasis level='strong'>SSML</emphasis> разметка!</speak></textarea>
+          <div class="ssml-help">
+            <h3>Примеры SSML-разметки</h3>
+            <ul>
+              <li><code>&lt;speak&gt;Текст&lt;/speak&gt;</code> - Основной тег</li>
+              <li><code>&lt;break time='500ms'/&gt;</code> - Пауза</li>
+              <li><code>&lt;emphasis level='strong'&gt;Текст&lt;/emphasis&gt;</code> - Выделение</li>
+              <li><code>&lt;prosody rate='slow'&gt;Текст&lt;/prosody&gt;</code> - Темп речи</li>
+              <li><code>&lt;prosody pitch='high'&gt;Текст&lt;/prosody&gt;</code> - Высота голоса</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      
+      <div class="control-panel">
+        <button id="synthesize-btn" class="primary-btn" disabled>Синтезировать</button>
+        <button id="clear-btn" class="secondary-btn">Очистить</button>
+      </div>
+      
+      <div class="player-panel hidden" id="player-panel">
+        <h2>Результат</h2>
+        <audio id="audio-player" controls></audio>
+        <div class="player-controls">
+          <button id="save-btn" class="primary-btn">Сохранить</button>
+          <button id="reset-btn" class="secondary-btn">Сбросить</button>
+        </div>
+      </div>
+    </main>
+    
+    <div class="notification" id="notification">
+      <span id="notification-text"></span>
+      <button id="notification-close">&times;</button>
+    </div>
+  </div>
+
+  <script src="scripts/api.js"></script>
+  <script src="scripts/audio-player.js"></script>
+  <script src="scripts/app.js"></script>
+</body>
+</html>

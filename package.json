@@ -1,0 +1,17 @@
+{
+    "name": "silero-tts-app-root",
+    "version": "1.0.0",
+    "description": "Графический интерфейс для Silero TTS (Root Package)",
+    "scripts": {
+      "install:all": "npm install && cd frontend && npm install",
+      "start:backend": "cd backend && python app.py",
+      "start:frontend": "cd frontend && npm start",
+      "start": "concurrently \"npm run start:backend\" \"npm run start:frontend\"",
+      "build": "cd frontend && npm run build"
+    },
+    "author": "Your Name",
+    "license": "MIT",
+    "devDependencies": {
+      "concurrently": "^8.2.1"
+    }
+  }
