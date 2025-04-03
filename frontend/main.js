@@ -26,6 +26,8 @@ function createWindow() {
     icon: path.join(__dirname, 'build', 'icon.png')
   });
 
+  mainWindow.maximize();
+
   mainWindow.loadFile(path.join(__dirname, 'renderer', 'index.html'));
 
   if (isDev) {
