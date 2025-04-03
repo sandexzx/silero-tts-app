@@ -103,8 +103,30 @@ ipcMain.handle('save-audio-file', async (event, audioPath) => {
   });
 
   if (!result.canceled && result.filePath) {
-    // Копируем аудиофайл из временной директории
-    fs.copyFileSync(audioPath, result.filePath);
+    // Проверяем путь - абсолютный или относительный
+    let srcPath = audioPath;
+    if (!path.isAbsolute(audioPath)) {
+      // Проверяем есть ли файл в бэкенде
+      const backendPath = path.join(__dirname, '..', 'backend', 'temp_audio', path.basename(audioPath));
+      if (fs.existsSync(backendPath)) {
+        srcPath = backendPath;
+      } else {
+        // Если нет в бэкенде, используем стандартный путь из констант
+        srcPath = path.join(require('../shared/constants').TEMP_AUDIO_DIR, path.basename(audioPath));
+      }
+    }
+    
+    // Логируем для отладки
+    console.log(`Копирую файл из ${srcPath} в ${result.filePath}`);
+    
+    // Проверяем существование исходного файла
+    if (!fs.existsSync(srcPath)) {
+      console.error(`Аудиофайл не найден: ${srcPath}`);
+      throw new Error(`Аудиофайл не найден по пути: ${srcPath}`);
+    }
+    
+    // Копируем файл
+    fs.copyFileSync(srcPath, result.filePath);
     return result.filePath;
   }
   

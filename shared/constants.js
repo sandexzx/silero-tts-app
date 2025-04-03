@@ -4,6 +4,8 @@ const isDev = process.env.NODE_ENV === 'development' ||
 
 const API_URL = 'http://127.0.0.1:8000';
 
+const path = require('path');
+
 module.exports = {
   isDev,
   API_URL,
@@ -16,5 +18,6 @@ module.exports = {
   },
   DEFAULT_SPEAKER: 'xenia',
   DEFAULT_SAMPLE_RATE: 48000,
-  SAMPLE_RATES: [8000, 24000, 48000]
+  SAMPLE_RATES: [8000, 24000, 48000],
+  TEMP_AUDIO_DIR: path.join(__dirname, '..', 'backend', 'temp_audio')
 };
