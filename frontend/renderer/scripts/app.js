@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const notification = document.getElementById('notification');
     const notificationText = document.getElementById('notification-text');
     const notificationClose = document.getElementById('notification-close');
+    const synthesizeSaveBtn = document.getElementById('synthesize-save-btn');
   
     // Состояние приложения
     let isServerOnline = false;
@@ -70,11 +71,13 @@ document.addEventListener('DOMContentLoaded', () => {
         statusDot.classList.add('online');
         statusText.textContent = 'Сервер активен';
         synthesizeBtn.disabled = false;
+        synthesizeSaveBtn.disabled = false; 
       } else {
         statusDot.classList.remove('online');
         statusDot.classList.add('offline');
         statusText.textContent = 'Сервер недоступен';
         synthesizeBtn.disabled = true;
+        synthesizeSaveBtn.disabled = true;
       }
     }
   
@@ -116,6 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
       clearBtn.addEventListener('click', handleClear);
       saveBtn.addEventListener('click', handleSave);
       resetBtn.addEventListener('click', handleReset);
+      synthesizeSaveBtn.addEventListener('click', handleSynthesizeAndSave);
       
       // Закрытие уведомления
       notificationClose.addEventListener('click', hideNotification);
@@ -219,6 +223,42 @@ document.addEventListener('DOMContentLoaded', () => {
       setTimeout(() => {
         hideNotification();
       }, 5000);
+    }
+
+    async function handleSynthesizeAndSave() {
+      if (!isServerOnline || isProcessing) return;
+      
+      const text = activeTab === 'text' ? textInput.value : ssmlInput.value;
+      if (!text.trim()) {
+        showNotification('Пожалуйста, введите текст для синтеза', 'error');
+        return;
+      }
+      
+      try {
+        isProcessing = true;
+        synthesizeBtn.disabled = true;
+        synthesizeSaveBtn.disabled = true;
+        synthesizeSaveBtn.textContent = 'Обрабатываем...';
+        
+        const speaker = speakerSelect.value;
+        const sampleRate = parseInt(sampleRateSelect.value);
+        const useSSML = activeTab === 'ssml';
+        
+        const savedPath = await apiClient.synthesizeAndSave(text, speaker, sampleRate, useSSML);
+        
+        if (savedPath) {
+          showNotification(`Файл успешно синтезирован и сохранен: ${savedPath}`, 'success');
+        } else {
+          throw new Error('Не удалось сохранить файл');
+        }
+      } catch (error) {
+        showNotification(`Ошибка при синтезе и сохранении: ${error.message}`, 'error');
+      } finally {
+        isProcessing = false;
+        synthesizeBtn.disabled = false;
+        synthesizeSaveBtn.disabled = false;
+        synthesizeSaveBtn.textContent = 'Синтезировать и сохранить';
+      }
     }
   
     function hideNotification() {

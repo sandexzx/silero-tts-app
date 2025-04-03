@@ -14,6 +14,36 @@ try {
     API_ENDPOINTS: API_ENDPOINTS,
     THEMES: constants.THEMES,
     DEFAULT_THEME: constants.DEFAULT_THEME,
+
+    // Добавь в блок contextBridge.exposeInMainWorld
+    synthesizeAndSave: async (text, speaker, sampleRate, useSSML) => {
+      try {
+        // Сначала синтезируем
+        const result = await fetch(API_ENDPOINTS.SYNTHESIZE_TEXT, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            text,
+            speaker,
+            sample_rate: sampleRate,
+            use_ssml: useSSML
+          }),
+        });
+        
+        const data = await result.json();
+        
+        // Если успешно, сразу сохраняем
+        if (data.filename && data.path) {
+          return await ipcRenderer.invoke('save-audio-file', data.path);
+        } else {
+          throw new Error("Синтез не вернул корректных данных");
+        }
+      } catch (error) {
+        return { error: error.message };
+      }
+    },
     
     // Улучшаем функцию проверки здоровья
     checkHealth: async () => {
@@ -96,8 +126,63 @@ try {
     
     // Те же функции что были...
     checkHealth: async () => {
-      // ... (остальной код оставь как есть)
+      console.log("Отправляю запрос по:", API_ENDPOINTS.HEALTH);
+      try {
+        const response = await fetch(API_ENDPOINTS.HEALTH, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+          cache: 'no-cache' // Отключаем кэширование
+        });
+        
+        if (!response.ok) {
+          throw new Error(`Сервер вернул ${response.status}: ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        console.log("Ответ здоровья:", data);
+        return data;
+      } catch (error) {
+        console.error("Ошибка проверки здоровья:", error.message);
+        return { status: 'error', error: error.message };
+      }
     },
-    // ... (остальные функции оставь без изменений)
+    
+    getSpeakers: async () => {
+      try {
+        const response = await fetch(API_ENDPOINTS.SPEAKERS);
+        return await response.json();
+      } catch (error) {
+        return { error: error.message };
+      }
+    },
+    
+    synthesize: async (text, speaker, sampleRate, useSSML) => {
+      try {
+        const response = await fetch(API_ENDPOINTS.SYNTHESIZE_TEXT, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            text,
+            speaker,
+            sample_rate: sampleRate,
+            use_ssml: useSSML
+          }),
+        });
+        
+        return await response.json();
+      } catch (error) {
+        return { error: error.message };
+      }
+    },
+    
+    saveAudioFile: async (audioPath) => {
+      return await ipcRenderer.invoke('save-audio-file', audioPath);
+    },
+    
+    openDirectory: async (dirPath) => {
+      return await ipcRenderer.invoke('open-directory', dirPath);
+    }
   });
 }

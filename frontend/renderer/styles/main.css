@@ -228,7 +228,11 @@
   .secondary-btn:hover {
     background-color: #ddd;
   }
-  
+
+  .primary-btn + .primary-btn {
+    margin-left: 10px;
+  }
+    
   .hidden {
     display: none;
   }

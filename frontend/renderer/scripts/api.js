@@ -82,6 +82,16 @@ class ApiClient {
         throw error;
       }
     }
+
+    async synthesizeAndSave(text, speaker = 'xenia', sampleRate = 48000, useSSML = false) {
+      try {
+        const result = await window.api.synthesizeAndSave(text, speaker, sampleRate, useSSML);
+        return result;
+      } catch (error) {
+        console.error('Ошибка при синтезе и сохранении:', error);
+        throw error;
+      }
+    }
     
     getAudioUrl(filename) {
       return `${window.api.API_URL}/audio/${filename}`;
