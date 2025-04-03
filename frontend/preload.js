@@ -11,7 +11,9 @@ try {
   // Экспортируем API для рендерера
   contextBridge.exposeInMainWorld('api', {
     API_URL: API_URL,
-    API_ENDPOINTS: API_ENDPOINTS, // Добавляем как мы говорили
+    API_ENDPOINTS: API_ENDPOINTS,
+    THEMES: constants.THEMES,
+    DEFAULT_THEME: constants.DEFAULT_THEME,
     
     // Улучшаем функцию проверки здоровья
     checkHealth: async () => {

@@ -1,15 +1,26 @@
 /* Путь: /home/zverev/sandbox/Electron/silero-tts-app/frontend/renderer/styles/main.css */
+/* Заменить существующий блок с :root на следующий код */
 :root {
+    /* Общие цвета */
     --primary-color: #4a6bef;
     --primary-hover: #3a5bdf;
-    --secondary-color: #e8eaf6;
+    --success-color: #4caf50;
+    --error-color: #f44336;
+    --warning-color: #ff9800;
+    
     --text-color: #333;
     --background-color: #f9f9f9;
     --panel-background: #ffffff;
     --border-color: #ddd;
-    --success-color: #4caf50;
-    --error-color: #f44336;
-    --warning-color: #ff9800;
+    --secondary-color: #e8eaf6;
+  }
+
+  [data-theme="dark"] {
+    --text-color: #e0e0e0;
+    --background-color: #121212;
+    --panel-background: #1e1e1e;
+    --border-color: #444;
+    --secondary-color: #283593;
   }
   
   * {
@@ -313,3 +324,36 @@
   .slider.round:before {
     border-radius: 50%;
   }
+
+  /* Добавить в конец CSS файла */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-right: 15px;
+}
+
+#theme-label {
+  min-width: 60px;
+  text-align: left;
+}
+
+/* Стили для хедера, чтобы правильно расположить элементы */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+}
+
+audio {
+  background-color: var(--panel-background);
+  color: var(--text-color);
+}
