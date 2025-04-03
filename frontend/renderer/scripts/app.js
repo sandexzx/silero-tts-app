@@ -30,6 +30,13 @@ document.addEventListener('DOMContentLoaded', () => {
     init();
   
     async function init() {
+      // Проверка существования apiClient  
+      if (typeof apiClient === 'undefined') {
+        console.error("❌ apiClient не определен! Создаю запасной экземпляр");
+        window.apiClient = new ApiClient();
+        // Используем глобальный объект для доступа отовсюду
+      }
+      
       await checkServerStatus();
       if (isServerOnline) {
         await loadSpeakers();
@@ -43,7 +50,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   
     async function checkServerStatus() {
-      isServerOnline = await apiClient.checkServerStatus();
+      try {
+        if (typeof apiClient === 'undefined') {
+          console.error("❌ apiClient все еще не определен в checkServerStatus");
+          isServerOnline = false;
+          return;
+        }
+        isServerOnline = await apiClient.checkServerStatus();
+      } catch (error) {
+        console.error("💣 Ошибка проверки статуса:", error);
+        isServerOnline = false;
+      }
       updateServerStatus();
     }
   

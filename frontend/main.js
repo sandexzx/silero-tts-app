@@ -19,7 +19,9 @@ function createWindow() {
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
-      nodeIntegration: false
+      nodeIntegration: false,
+      enableRemoteModule: false,
+      sandbox: false
     },
     icon: path.join(__dirname, 'build', 'icon.png')
   });
@@ -36,15 +38,17 @@ function createWindow() {
 }
 
 async function startPythonServer() {
-  // Проверяем, работает ли сервер уже
+  console.log("Пытаюсь проверить сервер по адресу:", API_ENDPOINTS.HEALTH);
+  
   try {
-    const response = await axios.get(API_ENDPOINTS.HEALTH);
+    const response = await axios.get(API_ENDPOINTS.HEALTH, { timeout: 2000 });
+    console.log("Ответ сервера:", response.data);
     if (response.data.status === 'ok') {
       console.log('Python сервер уже запущен');
       return true;
     }
   } catch (error) {
-    console.log('Python сервер не запущен, запускаем...');
+    console.error('Ошибка при проверке сервера:', error.message);
   }
 
   // Определяем путь к Python-скрипту

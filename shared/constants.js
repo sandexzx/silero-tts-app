@@ -2,7 +2,7 @@
 const isDev = process.env.NODE_ENV === 'development' || 
               process.argv.includes('--dev');
 
-const API_URL = isDev ? 'http://localhost:8000' : 'http://localhost:8000';
+const API_URL = 'http://127.0.0.1:8000';
 
 module.exports = {
   isDev,

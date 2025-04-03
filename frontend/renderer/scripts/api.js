@@ -1,16 +1,41 @@
 // Путь: /home/zverev/sandbox/Electron/silero-tts-app/frontend/renderer/scripts/api.js
 class ApiClient {
-    constructor() {
-      this.apiUrl = '';
-      this.lastSynthesisResult = null;
+  constructor() {
+    // Надежная инициализация с проверкой 
+    if (!window.api || !window.api.API_URL) {
+      console.error("🔥 window.api не инициализирован корректно!");
+      this.apiUrl = 'http://127.0.0.1:8000'; // Фоллбэк
+    } else {
+      this.apiUrl = window.api.API_URL;
     }
+    this.lastSynthesisResult = null;
+    console.log("📡 ApiClient создан с URL:", this.apiUrl);
+  }
   
     async checkServerStatus() {
+      console.log("Проверяю сервер по адресу:", this.apiUrl + "/health"); // Можно оставить для отладки
       try {
-        const health = await window.api.checkHealth();
-        return health && health.status === 'ok';
-      } catch (error) {
-        console.error('Ошибка проверки статуса сервера:', error);
+        const health = await window.api.checkHealth(); // Вызываем функцию из preload
+        console.log("Ответ сервера (checkServerStatus):", health); // Отладка
+
+        // [!!!] ПРАВИЛЬНАЯ ПРОВЕРКА [!!!]
+        // Проверяем, что ответ существует, это объект и его статус именно 'ok'
+        if (health && typeof health === 'object' && health.status === 'ok') {
+          console.log("Сервер действительно бодрячком! ✅"); // Обновим лог для ясности
+          return true; // Сервер доступен
+        } else {
+          // Логируем, почему считаем сервер недоступным
+          if (!health) {
+            console.log("Ответ от checkHealth пустой.");
+          } else if (typeof health !== 'object') {
+            console.log("Ответ от checkHealth не является объектом:", health);
+          } else {
+            console.log("Статус сервера не 'ok':", health.status, "| Детали:", health.error || 'Нет деталей');
+          }
+          return false; // Сервер недоступен или вернул ошибку
+        }
+      } catch (error) { // Эта ошибка ловится, если window.api.checkHealth выбросил исключение (маловероятно из-за try/catch внутри preload)
+        console.error('Критическая ошибка при вызове window.api.checkHealth:', error);
         return false;
       }
     }
@@ -59,7 +84,7 @@ class ApiClient {
     }
     
     getAudioUrl(filename) {
-      return `http://localhost:8000/audio/${filename}`;
+      return `${window.api.API_URL}/audio/${filename}`;
     }
   }
   
