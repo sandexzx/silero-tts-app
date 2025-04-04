@@ -4,6 +4,8 @@ const path = require('path');
 const fs = require('fs');
 const { spawn } = require('child_process');
 const axios = require('axios');
+const Store = require('electron-store');
+const store = new Store();
 const { isDev, API_URL, API_ENDPOINTS } = require('../shared/constants');
 
 let mainWindow;
@@ -175,6 +177,75 @@ ipcMain.handle('load-text-file', async (event) => {
 // Обработчик события: открыть директорию
 ipcMain.handle('open-directory', async (event, dirPath) => {
   shell.openPath(dirPath);
+});
+
+// Добавь перед app.whenReady()
+// Обработчик события: выбрать директорию для сохранения
+ipcMain.handle('select-save-directory', async (event) => {
+  const result = await dialog.showOpenDialog(mainWindow, {
+    title: 'Выбрать директорию для сохранения',
+    properties: ['openDirectory']
+  });
+
+  if (!result.canceled && result.filePaths.length > 0) {
+    const dirPath = result.filePaths[0];
+    // Сохраняем выбранную директорию
+    store.set('save-directory', dirPath);
+    return { success: true, path: dirPath };
+  }
+  
+  return { success: false };
+});
+
+// Обработчик события: получить путь к директории для сохранения
+ipcMain.handle('get-save-directory', async (event) => {
+  const dirPath = store.get('save-directory', '');
+  return { path: dirPath };
+});
+
+// Обработчик события: сохранить аудиофайл в выбранную директорию
+ipcMain.handle('save-audio-to-directory', async (event, { audioPath, directoryPath }) => {
+  try {
+    // Проверяем, передан ли путь к директории
+    if (!directoryPath) {
+      throw new Error('Путь к директории не задан');
+    }
+
+    // Проверяем существование директории
+    if (!fs.existsSync(directoryPath)) {
+      throw new Error(`Директория не существует: ${directoryPath}`);
+    }
+
+    // Формируем имя файла на основе текущей даты и времени
+    const now = new Date();
+    const filename = now.toISOString().replace(/:/g, '-').replace(/\..+/, '') + '.wav';
+    const destPath = path.join(directoryPath, filename);
+
+    // Проверяем путь - абсолютный или относительный
+    let srcPath = audioPath;
+    if (!path.isAbsolute(audioPath)) {
+      // Проверяем есть ли файл в бэкенде
+      const backendPath = path.join(__dirname, '..', 'backend', 'temp_audio', path.basename(audioPath));
+      if (fs.existsSync(backendPath)) {
+        srcPath = backendPath;
+      } else {
+        // Если нет в бэкенде, используем стандартный путь из констант
+        srcPath = path.join(require('../shared/constants').TEMP_AUDIO_DIR, path.basename(audioPath));
+      }
+    }
+    
+    // Проверяем существование исходного файла
+    if (!fs.existsSync(srcPath)) {
+      throw new Error(`Аудиофайл не найден: ${srcPath}`);
+    }
+    
+    // Копируем файл
+    fs.copyFileSync(srcPath, destPath);
+    return { success: true, path: destPath };
+  } catch (error) {
+    console.error('Ошибка при сохранении в директорию:', error);
+    return { success: false, error: error.message };
+  }
 });
 
 app.whenReady().then(async () => {

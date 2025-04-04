@@ -24,5 +24,6 @@ module.exports = {
     LIGHT: 'light',
     DARK: 'dark'
   },
-  DEFAULT_THEME: 'dark'
+  DEFAULT_THEME: 'dark',
+  DEFAULT_SAVE_DIRECTORY: ''
 };

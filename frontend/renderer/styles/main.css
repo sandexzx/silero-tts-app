@@ -426,3 +426,19 @@ audio {
   background-color: var(--panel-background);
   color: var(--text-color);
 }
+
+.save-dir-container {
+  display: flex;
+  gap: 10px;
+}
+
+#save-dir-display {
+  flex-grow: 1;
+  background-color: var(--panel-background);
+  cursor: default;
+}
+
+#select-save-dir-btn {
+  padding: 5px 10px;
+  white-space: nowrap;
+}

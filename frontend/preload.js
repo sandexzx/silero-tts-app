@@ -15,6 +15,18 @@ try {
     THEMES: constants.THEMES,
     DEFAULT_THEME: constants.DEFAULT_THEME,
 
+    selectSaveDirectory: async () => {
+      return await ipcRenderer.invoke('select-save-directory');
+    },
+    
+    getSaveDirectory: async () => {
+      return await ipcRenderer.invoke('get-save-directory');
+    },
+    
+    saveAudioToDirectory: async (audioPath, directoryPath) => {
+      return await ipcRenderer.invoke('save-audio-to-directory', { audioPath, directoryPath });
+    },
+
     synthesizeAndSave: async (text, speaker, sampleRate, useSSML) => {
       try {
         // Сначала синтезируем
@@ -130,8 +142,19 @@ try {
   contextBridge.exposeInMainWorld('api', {
     API_URL,
     API_ENDPOINTS,
+
+    selectSaveDirectory: async () => {
+      return await ipcRenderer.invoke('select-save-directory');
+    },
     
-    // Те же функции что были...
+    getSaveDirectory: async () => {
+      return await ipcRenderer.invoke('get-save-directory');
+    },
+    
+    saveAudioToDirectory: async (audioPath, directoryPath) => {
+      return await ipcRenderer.invoke('save-audio-to-directory', { audioPath, directoryPath });
+    },
+    
     checkHealth: async () => {
       console.log("Отправляю запрос по:", API_ENDPOINTS.HEALTH);
       try {

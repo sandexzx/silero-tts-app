@@ -21,11 +21,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const notificationText = document.getElementById('notification-text');
     const notificationClose = document.getElementById('notification-close');
     const synthesizeSaveBtn = document.getElementById('synthesize-save-btn');
+    const saveDirDisplay = document.getElementById('save-dir-display');
+    const selectSaveDirBtn = document.getElementById('select-save-dir-btn');
   
     // Состояние приложения
     let isServerOnline = false;
     let isProcessing = false;
-    let activeTab = 'text'; // 'text' или 'ssml'
+    let activeTab = 'text'; 
+    let saveDirectoryPath = '';
   
     // Инициализация
     init();
@@ -42,12 +45,34 @@ document.addEventListener('DOMContentLoaded', () => {
       if (isServerOnline) {
         await loadSpeakers();
       }
+
+      loadSaveDirectory();
       
       // Устанавливаем обработчики событий
       setupEventListeners();
       
       // Периодически проверяем статус сервера
       setInterval(checkServerStatus, 10000);
+    }
+
+    async function loadSaveDirectory() {
+      try {
+        saveDirectoryPath = await apiClient.getSaveDirectory();
+        updateSaveDirectoryDisplay();
+      } catch (error) {
+        console.error('Ошибка загрузки пути сохранения:', error);
+      }
+    }
+
+    function updateSaveDirectoryDisplay() {
+      if (saveDirectoryPath) {
+        saveDirDisplay.value = saveDirectoryPath;
+        // Включаем прямое сохранение, если директория выбрана
+        synthesizeSaveBtn.disabled = !isServerOnline;
+      } else {
+        saveDirDisplay.value = '';
+        saveDirDisplay.placeholder = 'Не выбрана';
+      }
     }
   
     async function checkServerStatus() {
@@ -127,6 +152,19 @@ document.addEventListener('DOMContentLoaded', () => {
       // Счетчики символов
       textInput.addEventListener('input', updateCharCounter);
       ssmlInput.addEventListener('input', updateCharCounter);
+
+      selectSaveDirBtn.addEventListener('click', async () => {
+        try {
+          const result = await apiClient.selectSaveDirectory();
+          if (result && result.success) {
+            saveDirectoryPath = result.path;
+            updateSaveDirectoryDisplay();
+            showNotification(`Директория установлена: ${result.path}`, 'success');
+          }
+        } catch (error) {
+          showNotification(`Ошибка выбора директории: ${error.message}`, 'error');
+        }
+      });
 
       // Кнопки управления текстом
       document.getElementById('clear-text-btn').addEventListener('click', () => {
@@ -283,6 +321,12 @@ document.addEventListener('DOMContentLoaded', () => {
     async function handleSynthesizeAndSave() {
       if (!isServerOnline || isProcessing) return;
       
+      // Проверяем, задана ли директория для сохранения
+      if (!saveDirectoryPath) {
+        showNotification('Пожалуйста, выберите директорию для сохранения', 'error');
+        return;
+      }
+      
       const text = activeTab === 'text' ? textInput.value : ssmlInput.value;
       if (!text.trim()) {
         showNotification('Пожалуйста, введите текст для синтеза', 'error');
@@ -299,19 +343,23 @@ document.addEventListener('DOMContentLoaded', () => {
         const sampleRate = parseInt(sampleRateSelect.value);
         const useSSML = activeTab === 'ssml';
         
-        const savedPath = await apiClient.synthesizeAndSave(text, speaker, sampleRate, useSSML);
+        // Синтезируем аудио
+        const result = await apiClient.synthesize(text, speaker, sampleRate, useSSML);
         
-        if (savedPath) {
-          showNotification(`Файл успешно синтезирован и сохранен: ${savedPath}`, 'success');
+        // Сохраняем в выбранную директорию
+        const saveResult = await window.api.saveAudioToDirectory(result.path, saveDirectoryPath);
+        
+        if (saveResult && saveResult.success) {
+          showNotification(`Файл сохранен в выбранную директорию: ${saveResult.path}`, 'success');
         } else {
-          throw new Error('Не удалось сохранить файл');
+          throw new Error(saveResult.error || 'Не удалось сохранить файл');
         }
       } catch (error) {
         showNotification(`Ошибка при синтезе и сохранении: ${error.message}`, 'error');
       } finally {
         isProcessing = false;
         synthesizeBtn.disabled = false;
-        synthesizeSaveBtn.disabled = false;
+        synthesizeSaveBtn.disabled = !saveDirectoryPath;
         synthesizeSaveBtn.textContent = 'Синтезировать и сохранить';
       }
     }

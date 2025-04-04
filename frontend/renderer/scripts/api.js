@@ -92,6 +92,44 @@ class ApiClient {
         throw error;
       }
     }
+
+    // Добавь новые методы в класс ApiClient
+    async selectSaveDirectory() {
+      try {
+        const result = await window.api.selectSaveDirectory();
+        return result;
+      } catch (error) {
+        console.error('Ошибка выбора директории:', error);
+        throw error;
+      }
+    }
+
+    async getSaveDirectory() {
+      try {
+        const result = await window.api.getSaveDirectory();
+        return result.path;
+      } catch (error) {
+        console.error('Ошибка получения пути директории:', error);
+        return '';
+      }
+    }
+
+    async saveAudioToDirectory(directoryPath) {
+      if (!this.lastSynthesisResult || !this.lastSynthesisResult.path) {
+        throw new Error('Нет доступных аудиофайлов для сохранения');
+      }
+
+      try {
+        const result = await window.api.saveAudioToDirectory(
+          this.lastSynthesisResult.path, 
+          directoryPath
+        );
+        return result;
+      } catch (error) {
+        console.error('Ошибка сохранения в директорию:', error);
+        throw error;
+      }
+    }
     
     getAudioUrl(filename) {
       return `${window.api.API_URL}/audio/${filename}`;
