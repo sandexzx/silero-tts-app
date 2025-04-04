@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const statusText = document.getElementById('status-text');
     const speakerSelect = document.getElementById('speaker-select');
     const sampleRateSelect = document.getElementById('sample-rate-select');
-    const ssmlToggle = document.getElementById('ssml-toggle');
     const textInput = document.getElementById('text-input');
     const ssmlInput = document.getElementById('ssml-input');
     const synthesizeBtn = document.getElementById('synthesize-btn');
@@ -136,9 +135,6 @@ document.addEventListener('DOMContentLoaded', () => {
       tabText.addEventListener('click', () => switchTab('text'));
       tabSsml.addEventListener('click', () => switchTab('ssml'));
       
-      // Включение/выключение SSML
-      ssmlToggle.addEventListener('change', handleSsmlToggle);
-      
       // Кнопки действий
       synthesizeBtn.addEventListener('click', handleSynthesize);
       clearBtn.addEventListener('click', handleClear);
@@ -195,24 +191,14 @@ document.addEventListener('DOMContentLoaded', () => {
         tabSsml.classList.remove('active');
         textEditor.classList.remove('hidden');
         ssmlEditor.classList.add('hidden');
-        ssmlToggle.checked = false;
       } else {
         tabText.classList.remove('active');
         tabSsml.classList.add('active');
         textEditor.classList.add('hidden');
         ssmlEditor.classList.remove('hidden');
-        ssmlToggle.checked = true;
       }
     }
-  
-    function handleSsmlToggle() {
-      if (ssmlToggle.checked) {
-        switchTab('ssml');
-      } else {
-        switchTab('text');
-      }
-    }
-  
+
     async function handleSynthesize() {
       if (!isServerOnline || isProcessing) return;
       
