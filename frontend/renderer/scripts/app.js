@@ -166,36 +166,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
 
-      // Кнопки управления текстом
-      document.getElementById('clear-text-btn').addEventListener('click', () => {
-        if (activeTab === 'text') {
-          textInput.value = '';
-        } else {
-          ssmlInput.value = '<speak></speak>';
-        }
-        updateCharCounter();
-      });
-
-      document.getElementById('paste-btn').addEventListener('click', async () => {
-        try {
-          const text = await navigator.clipboard.readText();
-          if (activeTab === 'text') {
-            textInput.value = text;
-          } else {
-            // Проверяем, является ли текст корректным SSML
-            if (text.trim().startsWith('<speak') && text.trim().endsWith('</speak>')) {
-              ssmlInput.value = text;
-            } else {
-              ssmlInput.value = `<speak>${text}</speak>`;
-            }
-          }
-          updateCharCounter();
-          showNotification('Текст вставлен', 'success');
-        } catch (err) {
-          showNotification('Не удалось вставить текст: ' + err.message, 'error');
-        }
-      });
-
       // SSML-кнопки вставки тегов
       document.getElementById('insert-speak-btn').addEventListener('click', () => {
         insertSsmlTag('<speak>', '</speak>');
@@ -214,7 +184,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       // Сохранение и загрузка текста
-      document.getElementById('save-text-btn').addEventListener('click', saveTextToFile);
       document.getElementById('load-text-btn').addEventListener('click', loadTextFromFile);
     }
   
@@ -405,24 +374,6 @@ document.addEventListener('DOMContentLoaded', () => {
       
       textarea.focus();
       updateCharCounter();
-    }
-    
-    async function saveTextToFile() {
-      try {
-        const text = activeTab === 'text' ? textInput.value : ssmlInput.value;
-        const filename = activeTab === 'text' ? 'silero-text.txt' : 'silero-ssml.xml';
-        
-        // Используем Electron API для сохранения файла
-        const result = await window.api.saveTextToFile(text, filename);
-        
-        if (result && result.filePath) {
-          showNotification(`Текст сохранен в ${result.filePath}`, 'success');
-        } else {
-          showNotification('Сохранение отменено', 'info');
-        }
-      } catch (error) {
-        showNotification(`Ошибка при сохранении: ${error.message}`, 'error');
-      }
     }
     
     async function loadTextFromFile() {

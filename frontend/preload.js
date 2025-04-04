@@ -117,10 +117,6 @@ try {
     openDirectory: async (dirPath) => {
       return await ipcRenderer.invoke('open-directory', dirPath);
     },
-
-    saveTextToFile: async (content, defaultFilename) => {
-      return await ipcRenderer.invoke('save-text-file', { content, defaultFilename });
-    },
     
     loadTextFromFile: async () => {
       return await ipcRenderer.invoke('load-text-file');
@@ -215,10 +211,6 @@ try {
     
     openDirectory: async (dirPath) => {
       return await ipcRenderer.invoke('open-directory', dirPath);
-    },
-
-    saveTextToFile: async (content, defaultFilename) => {
-      return await ipcRenderer.invoke('save-text-file', { content, defaultFilename });
     },
     
     loadTextFromFile: async () => {
