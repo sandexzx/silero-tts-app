@@ -253,6 +253,23 @@ textarea::placeholder {
   background: var(--secondary-color);
   border-radius: var(--control-radius);
   border: 1px solid var(--border-color);
+  /* Добавь это свойство, чтобы зафиксировать положение блока */
+  position: relative;
+  /* Добавь этот отступ, чтобы текст не прилипал к левому краю */
+  left: 5;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.ssml-help ul {
+  padding-left: 20px; /* Этот отступ сдвинет весь список вправо */
+  margin-left: 0;
+  list-style-position: inside; /* Чтобы маркеры списка были внутри, а не снаружи */
+}
+
+.ssml-help li {
+  padding-left: 5px; /* Дополнительный отступ для текста внутри элементов */
+  text-indent: -5px; /* Чтобы первая строка не была смещена */
 }
 
 .ssml-help h3 {
