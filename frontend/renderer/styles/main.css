@@ -430,15 +430,21 @@ audio {
 .save-dir-container {
   display: flex;
   gap: 10px;
+  width: 100%;
 }
 
 #save-dir-display {
   flex-grow: 1;
   background-color: var(--panel-background);
   cursor: default;
+  width: calc(100% - 100px);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 #select-save-dir-btn {
   padding: 5px 10px;
   white-space: nowrap;
+  flex-shrink: 0;
 }
