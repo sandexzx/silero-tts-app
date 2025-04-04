@@ -198,7 +198,7 @@ textarea::placeholder {
 
 .char-counter {
   position: absolute;
-  bottom: 12px;
+  top: 12px; /* изменить bottom на top */
   right: 12px;
   font-size: 12px;
   color: var(--secondary-text);
