@@ -3,19 +3,27 @@ class ThemeManager {
       this.themeSwitch = document.getElementById('theme-switch');
       this.themeLabel = document.getElementById('theme-label');
       this.themes = window.api.THEMES || { LIGHT: 'light', DARK: 'dark' };
-      this.defaultTheme = window.api.DEFAULT_THEME || 'light';
+      this.defaultTheme = window.api.DEFAULT_THEME || 'dark';
       
       // Инициализация
       this.init();
     }
     
     init() {
-      // Загружаем сохраненную тему или используем тему по умолчанию
-      const savedTheme = localStorage.getItem('theme') || this.defaultTheme;
-      this.applyTheme(savedTheme);
+      // Проверяем, есть ли сохраненная тема
+      const savedTheme = localStorage.getItem('theme');
+      
+      // Если нет сохраненной темы, принудительно применяем дефолтную
+      if (!savedTheme) {
+        this.applyTheme(this.defaultTheme);
+        localStorage.setItem('theme', this.defaultTheme);
+      } else {
+        this.applyTheme(savedTheme);
+      }
       
       // Устанавливаем состояние переключателя в соответствии с темой
-      this.themeSwitch.checked = savedTheme === this.themes.DARK;
+      const currentTheme = localStorage.getItem('theme') || this.defaultTheme;
+      this.themeSwitch.checked = currentTheme === this.themes.DARK;
       
       // Обработчик события изменения переключателя
       this.themeSwitch.addEventListener('change', () => {

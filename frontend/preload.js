@@ -12,8 +12,8 @@ try {
   contextBridge.exposeInMainWorld('api', {
     API_URL: API_URL,
     API_ENDPOINTS: API_ENDPOINTS,
-    THEMES: constants.THEMES,
-    DEFAULT_THEME: constants.DEFAULT_THEME,
+    THEMES: constants.THEMES || { LIGHT: 'light', DARK: 'dark' },
+    DEFAULT_THEME: constants.DEFAULT_THEME || 'dark',
 
     selectSaveDirectory: async () => {
       return await ipcRenderer.invoke('select-save-directory');
@@ -142,6 +142,8 @@ try {
   contextBridge.exposeInMainWorld('api', {
     API_URL,
     API_ENDPOINTS,
+    THEMES: { LIGHT: 'light', DARK: 'dark' },
+    DEFAULT_THEME: 'dark',
 
     selectSaveDirectory: async () => {
       return await ipcRenderer.invoke('select-save-directory');
