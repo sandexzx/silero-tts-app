@@ -265,7 +265,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const result = await apiClient.synthesize(text, speaker, sampleRate, useSSML);
         
         // Обновляем аудиоплеер и показываем панель
-        audioPlayer.setAudioSource(apiClient.getAudioUrl(result.filename));
+        const audioUrl = apiClient.getAudioUrl(result.filename);
+        console.log("Ссылка на аудио:", audioUrl);
+        const player = document.getElementById('audio-player');
+        player.src = audioUrl;
+        player.load();
+        player.onloadedmetadata = function() {
+          console.log("Метаданные загружены: длительность =", player.duration);
+        };
         playerPanel.classList.remove('hidden');
         
         showNotification('Синтез успешно завершен!', 'success');
