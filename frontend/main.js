@@ -161,7 +161,6 @@ ipcMain.handle('open-directory', async (event, dirPath) => {
   shell.openPath(dirPath);
 });
 
-// Добавь перед app.whenReady()
 // Обработчик события: выбрать директорию для сохранения
 ipcMain.handle('select-save-directory', async (event) => {
   const result = await dialog.showOpenDialog(mainWindow, {
@@ -230,6 +229,12 @@ ipcMain.handle('save-audio-to-directory', async (event, { audioPath, directoryPa
   }
 });
 
+// Отключаем аппаратное ускорение и устанавливаем другие флаги для предотвращения проблем с Vulkan
+app.disableHardwareAcceleration();
+app.commandLine.appendSwitch('disable-gpu');
+app.commandLine.appendSwitch('disable-software-rasterizer');
+app.commandLine.appendSwitch('disable-gpu-compositing');
+
 app.whenReady().then(async () => {
   if (autoStartPythonServer) {
     await startPythonServer();
@@ -242,6 +247,11 @@ app.whenReady().then(async () => {
       createWindow();
     }
   });
+});
+
+// Обработка ошибок, связанных с GPU
+app.on('render-process-gone', (event, webContents, details) => {
+  console.log('Render процесс ушёл:', details.reason);
 });
 
 app.on('window-all-closed', () => {
