@@ -1,430 +1,492 @@
 /* Путь: /home/zverev/sandbox/Electron/silero-tts-app/frontend/renderer/styles/main.css */
-/* Заменить существующий блок с :root на следующий код */
+
 :root {
-    /* Общие цвета */
-    --primary-color: #4a6bef;
-    --primary-hover: #3a5bdf;
-    --success-color: #4caf50;
-    --error-color: #f44336;
-    --warning-color: #ff9800;
-    
-    --text-color: #333;
-    --background-color: #f9f9f9;
-    --panel-background: #ffffff;
-    --border-color: #ddd;
-    --secondary-color: #e8eaf6;
-  }
-
-  [data-theme="dark"] {
-    --text-color: #e0e0e0;
-    --background-color: #121212;
-    --panel-background: #1e1e1e;
-    --border-color: #444;
-    --secondary-color: #283593;
-  }
+  /* Основные цвета Apple (светлая тема) */
+  --primary-color: #0071e3;
+  --primary-hover: #0077ed;
+  --success-color: #34c759;
+  --error-color: #ff3b30;
+  --warning-color: #ff9f0a;
   
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
-  
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    background-color: var(--background-color);
-    color: var(--text-color);
-    line-height: 1.6;
-  }
-  
-  .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-  }
-  
-  header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid var(--border-color);
-  }
-  
-  h1 {
-    font-size: 24px;
-    font-weight: 500;
-  }
-  
-  .status-indicator {
-    display: flex;
-    align-items: center;
-  }
-  
-  .status-dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    margin-right: 8px;
-  }
-  
-  .status-dot.online {
-    background-color: var(--success-color);
-  }
-  
-  .status-dot.offline {
-    background-color: var(--error-color);
-  }
-  
-  .settings-panel, .editor-panel, .control-panel, .player-panel {
-    background-color: var(--panel-background);
-    border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  }
-  
-  .settings-panel {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-  }
-  
-  .setting-group {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    min-width: 150px;
-  }
-  
-  .setting-group label {
-    margin-bottom: 8px;
-    font-weight: 500;
-  }
-  
-  select, input, textarea {
-    padding: 10px;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    font-size: 14px;
-    outline: none;
-  }
-  
-  select:focus, input:focus {
-    border-color: var(--primary-color);
-  }
-
-  textarea:focus {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 2px rgba(74, 107, 239, 0.25);
-    outline: none;
-  }
-
-  textarea::placeholder {
-    color: #999;
-    opacity: 0.7;
-  }
-  
-  textarea {
-    width: 100%;
-    height: 200px;
-    resize: vertical;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    line-height: 1.5;
-    padding: 12px;
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
-    background-color: var(--panel-background);
-    color: var(--text-color);
-    transition: border-color 0.3s, box-shadow 0.3s;
-  }
-  
-  .editor-panel {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .tab-controls {
-    display: flex;
-    margin-bottom: 15px;
-  }
-  
-  .tab-btn {
-    background: none;
-    border: none;
-    padding: 10px 15px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--text-color);
-    border-bottom: 2px solid transparent;
-  }
-  
-  .tab-btn.active {
-    border-bottom: 2px solid var(--primary-color);
-    color: var(--primary-color);
-  }
-  
-  .text-editor, .ssml-editor {
-    position: relative;
-    margin-bottom: 10px;
-  }
-
-  .char-counter {
-    position: absolute;
-    bottom: 8px;
-    right: 12px;
-    font-size: 12px;
-    color: #888;
-    background-color: rgba(255, 255, 255, 0.8);
-    padding: 2px 6px;
-    border-radius: 10px;
-    pointer-events: none;
-  }
-
-  [data-theme="dark"] .char-counter {
-    background-color: rgba(40, 40, 40, 0.8);
-    color: #aaa;
-  }
-
-  .text-controls {
-    display: flex;
-    margin-bottom: 8px;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-  
-  .text-control-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: var(--panel-background);
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    padding: 6px 10px;
-    font-size: 13px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .text-control-btn:hover {
-    background-color: var(--secondary-color);
-  }
-  
-  .text-control-btn i {
-    margin-right: 5px;
-  }
-  
-  .ssml-help {
-    margin-top: 15px;
-    font-size: 12px;
-    padding: 10px;
-    background: var(--secondary-color);
-    border-radius: 4px;
-  }
-  
-  .ssml-help h3 {
-    font-size: 14px;
-    margin-bottom: 8px;
-  }
-  
-  .ssml-help code {
-    font-family: monospace;
-    background: rgba(0, 0, 0, 0.05);
-    padding: 2px 4px;
-    border-radius: 3px;
-  }
-  
-  .control-panel {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-  }
-  
-  .player-panel {
-    text-align: center;
-  }
-  
-  .player-panel h2 {
-    font-size: 18px;
-    margin-bottom: 15px;
-  }
-  
-  .player-panel audio {
-    width: 100%;
-    margin-bottom: 15px;
-  }
-  
-  .player-controls {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-  }
-  
-  .primary-btn, .secondary-btn {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.2s;
-  }
-  
-  .primary-btn {
-    background-color: var(--primary-color);
-    color: white;
-  }
-  
-  .primary-btn:hover {
-    background-color: var(--primary-hover);
-  }
-  
-  .primary-btn:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-  }
-  
-  .secondary-btn {
-    background-color: var(--secondary-color);
-    color: var(--text-color);
-  }
-  
-  .secondary-btn:hover {
-    background-color: #ddd;
-  }
-
-  .primary-btn + .primary-btn {
-    margin-left: 10px;
-  }
-    
-  .hidden {
-    display: none;
-  }
-  
-  .notification {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    padding: 15px 20px;
-    background-color: var(--panel-background);
-    border-left: 4px solid var(--primary-color);
-    border-radius: 4px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    display: none;
-    z-index: 1000;
-    max-width: 400px;
-  }
-  
-  .notification.show {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .notification.error {
-    border-left-color: var(--error-color);
-  }
-  
-  .notification.success {
-    border-left-color: var(--success-color);
-  }
-  
-  #notification-close {
-    background: none;
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
-    margin-left: 10px;
-  }
-  
-  /* Switch для SSML */
-  .switch {
-    position: relative;
-    display: inline-block;
-    width: 50px;
-    height: 24px;
-  }
-  
-  .switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-  }
-  
-  .slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ccc;
-    transition: .4s;
-  }
-  
-  .slider:before {
-    position: absolute;
-    content: "";
-    height: 16px;
-    width: 16px;
-    left: 4px;
-    bottom: 4px;
-    background-color: white;
-    transition: .4s;
-  }
-  
-  input:checked + .slider {
-    background-color: var(--primary-color);
-  }
-  
-  input:focus + .slider {
-    box-shadow: 0 0 1px var(--primary-color);
-  }
-  
-  input:checked + .slider:before {
-    transform: translateX(26px);
-  }
-  
-  .slider.round {
-    border-radius: 24px;
-  }
-  
-  .slider.round:before {
-    border-radius: 50%;
-  }
-
-  /* Добавить в конец CSS файла */
-.theme-toggle {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-right: 15px;
+  /* Улучшенный контраст для светлой темы */
+  --text-color: #1d1d1f;
+  --secondary-text: #6e6e73;
+  --background-color: #f2f2f7;
+  --panel-background: #ffffff;
+  --border-color: #c6c6c8;
+  --secondary-color: #e8e8ed;
+  --active-control-bg: #d2d2d7;
+  --button-text: #ffffff;
+  --control-radius: 8px;
+  --panel-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --switch-bg: #d9d9dd;
+  --switch-border: #b0b0b5;
+  --slider-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
 }
 
-#theme-label {
-  min-width: 60px;
-  text-align: left;
+[data-theme="dark"] {
+  --text-color: #f5f5f7;
+  --secondary-text: #a1a1a6;
+  --background-color: #1d1d1f;
+  --panel-background: #2d2d2f;
+  --border-color: #424245;
+  --secondary-color: #3a3a3c;
+  --active-control-bg: #4e4e52;
+  --panel-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  --switch-bg: #38383a;
+  --switch-border: #5d5d61;
+  --slider-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
 }
 
-/* Стили для хедера, чтобы правильно расположить элементы */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Icons', 'Helvetica Neue', Arial, sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  line-height: 1.47059;
+  font-weight: 400;
+  letter-spacing: -0.022em;
+}
+
+.container {
+  max-width: 1024px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
 header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
-  padding-bottom: 10px;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
   border-bottom: 1px solid var(--border-color);
+}
+
+h1 {
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 8px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+.status-dot.online {
+  background-color: var(--success-color);
+}
+
+.status-dot.offline {
+  background-color: var(--error-color);
+}
+
+/* Контрастные панели с чёткими границами */
+.settings-panel, .editor-panel, .control-panel, .player-panel {
+  background-color: var(--panel-background);
+  border-radius: var(--control-radius);
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: var(--panel-shadow);
+  border: 1px solid var(--border-color);
+}
+
+.settings-panel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.setting-group {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 150px;
+}
+
+.setting-group label {
+  margin-bottom: 8px;
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--secondary-text);
+}
+
+select, input, textarea {
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--control-radius);
+  font-size: 14px;
+  background-color: var(--panel-background);
+  color: var(--text-color);
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+select {
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2386868b' viewBox='0 0 16 16'><path d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: calc(100% - 12px) center;
+  padding-right: 32px;
+}
+
+select:focus, input:focus, textarea:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.2);
+  outline: none;
+}
+
+textarea {
+  width: 100%;
+  height: 200px;
+  resize: vertical;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
+  line-height: 1.5;
+  padding: 12px;
+}
+
+textarea::placeholder {
+  color: var(--secondary-text);
+  opacity: 0.7;
+}
+
+.editor-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.tab-controls {
+  display: flex;
+  margin-bottom: 16px;
+}
+
+.tab-btn {
+  background: none;
+  border: none;
+  padding: 10px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--secondary-text);
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.tab-btn.active {
+  border-bottom: 2px solid var(--primary-color);
+  color: var(--primary-color);
+}
+
+.text-editor, .ssml-editor {
+  position: relative;
+}
+
+.char-counter {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  font-size: 12px;
+  color: var(--secondary-text);
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 4px 8px;
+  border-radius: 12px;
+  pointer-events: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="dark"] .char-counter {
+  background-color: rgba(45, 45, 47, 0.9);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.text-controls {
+  display: flex;
+  margin-bottom: 12px;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Усиленный контраст для кнопок управления */
+.text-control-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--secondary-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--control-radius);
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--text-color);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.text-control-btn:hover {
+  background-color: var(--active-control-bg);
+}
+
+.text-control-btn i {
+  margin-right: 6px;
+}
+
+.ssml-help {
+  margin-top: 16px;
+  font-size: 13px;
+  padding: 16px;
+  background: var(--secondary-color);
+  border-radius: var(--control-radius);
+  border: 1px solid var(--border-color);
+}
+
+.ssml-help h3 {
+  font-size: 15px;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.ssml-help code {
+  font-family: 'SF Mono', Menlo, monospace;
+  background: rgba(0, 0, 0, 0.05);
+  padding: 2px 5px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="dark"] .ssml-help code {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.control-panel {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.player-panel {
+  text-align: center;
+}
+
+.player-panel h2 {
+  font-size: 18px;
+  margin-bottom: 16px;
+  font-weight: 500;
+}
+
+.player-panel audio {
+  width: 100%;
+  margin-bottom: 16px;
+  border-radius: var(--control-radius);
+  background-color: var(--secondary-color);
+}
+
+.player-controls {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+/* Улучшенный стиль кнопок */
+.primary-btn, .secondary-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: var(--control-radius);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.primary-btn {
+  background-color: var(--primary-color);
+  color: var(--button-text);
+}
+
+.primary-btn:hover {
+  background-color: var(--primary-hover);
+}
+
+.primary-btn:active {
+  transform: scale(0.98);
+}
+
+.primary-btn:disabled {
+  background-color: var(--secondary-color);
+  color: var(--secondary-text);
+  cursor: not-allowed;
+  transform: none;
+  border: 1px solid var(--border-color);
+}
+
+.secondary-btn {
+  background-color: var(--secondary-color);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+}
+
+.secondary-btn:hover {
+  background-color: var(--active-control-bg);
+}
+
+.secondary-btn:active {
+  transform: scale(0.98);
+}
+
+.primary-btn + .primary-btn {
+  margin-left: 12px;
+}
+  
+.hidden {
+  display: none;
+}
+
+.notification {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  padding: 16px 20px;
+  background-color: var(--panel-background);
+  border-radius: var(--control-radius);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: none;
+  z-index: 1000;
+  max-width: 400px;
+  border-left: 4px solid var(--primary-color);
+  transition: transform 0.3s, opacity 0.3s;
+  border: 1px solid var(--border-color);
+}
+
+.notification.show {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  animation: slideIn 0.3s forwards;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.notification.error {
+  border-left-color: var(--error-color);
+}
+
+.notification.success {
+  border-left-color: var(--success-color);
+}
+
+#notification-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  margin-left: 12px;
+  color: var(--secondary-text);
+}
+
+/* Улучшенный Switch с четкими границами */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 26px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--switch-bg);
+  transition: .4s;
+  border: 1px solid var(--switch-border);
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 22px;
+  width: 22px;
+  left: 2px;
+  bottom: 1px;
+  background-color: white;
+  transition: .4s;
+  box-shadow: var(--slider-shadow);
+  border: 1px solid var(--switch-border);
+}
+
+input:checked + .slider {
+  background-color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px var(--primary-color);
+}
+
+input:checked + .slider:before {
+  transform: translateX(23px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.slider.round {
+  border-radius: 26px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+/* Дополнительные стили */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-right: 20px;
+}
+
+#theme-label {
+  min-width: 60px;
+  font-size: 13px;
+  color: var(--secondary-text);
 }
 
 .header-right {
   display: flex;
   align-items: center;
-}
-
-audio {
-  background-color: var(--panel-background);
-  color: var(--text-color);
 }
 
 .save-dir-container {
@@ -441,10 +503,35 @@ audio {
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
+  border: 1px solid var(--border-color);
 }
 
 #select-save-dir-btn {
-  padding: 5px 10px;
+  padding: 8px 12px;
   white-space: nowrap;
   flex-shrink: 0;
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+  .settings-panel {
+    flex-direction: column;
+  }
+  
+  .control-panel {
+    flex-direction: column;
+  }
+  
+  .primary-btn, .secondary-btn {
+    width: 100%;
+  }
+  
+  .player-controls {
+    flex-direction: column;
+  }
+  
+  .primary-btn + .primary-btn {
+    margin-left: 0;
+    margin-top: 10px;
+  }
 }
