@@ -135,6 +135,43 @@ ipcMain.handle('save-audio-file', async (event, audioPath) => {
   return null;
 });
 
+// Обработчик события: сохранить текстовый файл
+ipcMain.handle('save-text-file', async (event, { content, defaultFilename }) => {
+  const result = await dialog.showSaveDialog(mainWindow, {
+    title: 'Сохранить текст',
+    defaultPath: path.join(app.getPath('documents'), defaultFilename || 'text.txt'),
+    filters: [
+      { name: 'Текстовые файлы', extensions: ['txt', 'xml'] }
+    ]
+  });
+
+  if (!result.canceled && result.filePath) {
+    fs.writeFileSync(result.filePath, content, 'utf8');
+    return { success: true, filePath: result.filePath };
+  }
+  
+  return { success: false };
+});
+
+// Обработчик события: загрузить текстовый файл
+ipcMain.handle('load-text-file', async (event) => {
+  const result = await dialog.showOpenDialog(mainWindow, {
+    title: 'Открыть текстовый файл',
+    properties: ['openFile'],
+    filters: [
+      { name: 'Текстовые файлы', extensions: ['txt', 'xml'] }
+    ]
+  });
+
+  if (!result.canceled && result.filePaths.length > 0) {
+    const filePath = result.filePaths[0];
+    const content = fs.readFileSync(filePath, 'utf8');
+    return { success: true, filePath, content };
+  }
+  
+  return { success: false };
+});
+
 // Обработчик события: открыть директорию
 ipcMain.handle('open-directory', async (event, dirPath) => {
   shell.openPath(dirPath);

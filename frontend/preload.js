@@ -15,7 +15,6 @@ try {
     THEMES: constants.THEMES,
     DEFAULT_THEME: constants.DEFAULT_THEME,
 
-    // Добавь в блок contextBridge.exposeInMainWorld
     synthesizeAndSave: async (text, speaker, sampleRate, useSSML) => {
       try {
         // Сначала синтезируем
@@ -105,6 +104,14 @@ try {
     
     openDirectory: async (dirPath) => {
       return await ipcRenderer.invoke('open-directory', dirPath);
+    },
+
+    saveTextToFile: async (content, defaultFilename) => {
+      return await ipcRenderer.invoke('save-text-file', { content, defaultFilename });
+    },
+    
+    loadTextFromFile: async () => {
+      return await ipcRenderer.invoke('load-text-file');
     }
   });
 } catch (error) {
@@ -183,6 +190,14 @@ try {
     
     openDirectory: async (dirPath) => {
       return await ipcRenderer.invoke('open-directory', dirPath);
+    },
+
+    saveTextToFile: async (content, defaultFilename) => {
+      return await ipcRenderer.invoke('save-text-file', { content, defaultFilename });
+    },
+    
+    loadTextFromFile: async () => {
+      return await ipcRenderer.invoke('load-text-file');
     }
   });
 }

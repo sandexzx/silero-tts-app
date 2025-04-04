@@ -62,11 +62,25 @@
         </div>
         
         <div class="text-editor" id="text-editor">
+          <div class="text-controls">
+            <button class="text-control-btn" id="clear-text-btn"><i>✓</i>Очистить</button>
+            <button class="text-control-btn" id="paste-btn"><i>📋</i>Вставить</button>
+            <button class="text-control-btn" id="save-text-btn"><i>💾</i>Сохранить текст</button>
+            <button class="text-control-btn" id="load-text-btn"><i>📂</i>Загрузить текст</button>
+          </div>
           <textarea id="text-input" placeholder="Введите текст для синтеза..."></textarea>
+          <div class="char-counter" id="text-char-counter">0 символов</div>
         </div>
         
         <div class="ssml-editor hidden" id="ssml-editor">
+          <div class="text-controls">
+            <button class="text-control-btn" id="insert-speak-btn"><i>🔉</i>speak</button>
+            <button class="text-control-btn" id="insert-break-btn"><i>⏸️</i>break</button>
+            <button class="text-control-btn" id="insert-emphasis-btn"><i>📢</i>emphasis</button>
+            <button class="text-control-btn" id="insert-prosody-btn"><i>🎵</i>prosody</button>
+          </div>
           <textarea id="ssml-input" placeholder="Введите текст с SSML-разметкой..."><speak>Привет! <break time='500ms'/> Это <emphasis level='strong'>SSML</emphasis> разметка!</speak></textarea>
+          <div class="char-counter" id="ssml-char-counter">0 символов</div>
           <div class="ssml-help">
             <h3>Примеры SSML-разметки</h3>
             <ul>

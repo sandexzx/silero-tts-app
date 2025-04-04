@@ -123,6 +123,61 @@ document.addEventListener('DOMContentLoaded', () => {
       
       // Закрытие уведомления
       notificationClose.addEventListener('click', hideNotification);
+
+      // Счетчики символов
+      textInput.addEventListener('input', updateCharCounter);
+      ssmlInput.addEventListener('input', updateCharCounter);
+
+      // Кнопки управления текстом
+      document.getElementById('clear-text-btn').addEventListener('click', () => {
+        if (activeTab === 'text') {
+          textInput.value = '';
+        } else {
+          ssmlInput.value = '<speak></speak>';
+        }
+        updateCharCounter();
+      });
+
+      document.getElementById('paste-btn').addEventListener('click', async () => {
+        try {
+          const text = await navigator.clipboard.readText();
+          if (activeTab === 'text') {
+            textInput.value = text;
+          } else {
+            // Проверяем, является ли текст корректным SSML
+            if (text.trim().startsWith('<speak') && text.trim().endsWith('</speak>')) {
+              ssmlInput.value = text;
+            } else {
+              ssmlInput.value = `<speak>${text}</speak>`;
+            }
+          }
+          updateCharCounter();
+          showNotification('Текст вставлен', 'success');
+        } catch (err) {
+          showNotification('Не удалось вставить текст: ' + err.message, 'error');
+        }
+      });
+
+      // SSML-кнопки вставки тегов
+      document.getElementById('insert-speak-btn').addEventListener('click', () => {
+        insertSsmlTag('<speak>', '</speak>');
+      });
+
+      document.getElementById('insert-break-btn').addEventListener('click', () => {
+        insertSsmlTag('<break time="500ms"/>', '');
+      });
+
+      document.getElementById('insert-emphasis-btn').addEventListener('click', () => {
+        insertSsmlTag('<emphasis level="strong">', '</emphasis>');
+      });
+
+      document.getElementById('insert-prosody-btn').addEventListener('click', () => {
+        insertSsmlTag('<prosody rate="slow">', '</prosody>');
+      });
+
+      // Сохранение и загрузка текста
+      document.getElementById('save-text-btn').addEventListener('click', saveTextToFile);
+      document.getElementById('load-text-btn').addEventListener('click', loadTextFromFile);
     }
   
     function switchTab(tabName) {
@@ -260,6 +315,88 @@ document.addEventListener('DOMContentLoaded', () => {
         synthesizeSaveBtn.textContent = 'Синтезировать и сохранить';
       }
     }
+
+    function updateCharCounter() {
+      const textCounter = document.getElementById('text-char-counter');
+      const ssmlCounter = document.getElementById('ssml-char-counter');
+      
+      if (textCounter) {
+        const charCount = textInput.value.length;
+        textCounter.textContent = `${charCount} символов`;
+      }
+      
+      if (ssmlCounter) {
+        const charCount = ssmlInput.value.length;
+        ssmlCounter.textContent = `${charCount} символов`;
+      }
+    }
+    
+    function insertSsmlTag(openTag, closeTag) {
+      const textarea = ssmlInput;
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const selectedText = textarea.value.substring(start, end);
+      
+      // Если тег не требует закрывающего тега (например, <break/>)
+      if (!closeTag) {
+        textarea.value = textarea.value.substring(0, start) + openTag + textarea.value.substring(end);
+        textarea.selectionStart = start + openTag.length;
+        textarea.selectionEnd = start + openTag.length;
+      } else {
+        textarea.value = textarea.value.substring(0, start) + openTag + selectedText + closeTag + textarea.value.substring(end);
+        textarea.selectionStart = start + openTag.length;
+        textarea.selectionEnd = start + openTag.length + selectedText.length;
+      }
+      
+      textarea.focus();
+      updateCharCounter();
+    }
+    
+    async function saveTextToFile() {
+      try {
+        const text = activeTab === 'text' ? textInput.value : ssmlInput.value;
+        const filename = activeTab === 'text' ? 'silero-text.txt' : 'silero-ssml.xml';
+        
+        // Используем Electron API для сохранения файла
+        const result = await window.api.saveTextToFile(text, filename);
+        
+        if (result && result.filePath) {
+          showNotification(`Текст сохранен в ${result.filePath}`, 'success');
+        } else {
+          showNotification('Сохранение отменено', 'info');
+        }
+      } catch (error) {
+        showNotification(`Ошибка при сохранении: ${error.message}`, 'error');
+      }
+    }
+    
+    async function loadTextFromFile() {
+      try {
+        // Используем Electron API для загрузки файла
+        const result = await window.api.loadTextFromFile();
+        
+        if (result && result.content) {
+          if (activeTab === 'text') {
+            textInput.value = result.content;
+          } else {
+            // Проверяем, является ли текст SSML
+            const content = result.content.trim();
+            if (content.startsWith('<speak') && content.endsWith('</speak>')) {
+              ssmlInput.value = content;
+            } else {
+              ssmlInput.value = `<speak>${content}</speak>`;
+            }
+          }
+          updateCharCounter();
+          showNotification(`Текст загружен из ${result.filePath}`, 'success');
+        }
+      } catch (error) {
+        showNotification(`Ошибка при загрузке: ${error.message}`, 'error');
+      }
+    }
+    
+    // Инициализация счетчиков символов при загрузке
+    updateCharCounter();
   
     function hideNotification() {
       notification.className = 'notification';
