@@ -366,10 +366,6 @@ textarea::placeholder {
 .secondary-btn:active {
   transform: scale(0.98);
 }
-
-.primary-btn + .primary-btn {
-  margin-left: 12px;
-}
   
 .hidden {
   display: none;
