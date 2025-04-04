@@ -8,6 +8,24 @@ const Store = require('electron-store');
 const store = new Store();
 const { isDev, API_URL, API_ENDPOINTS } = require('../shared/constants');
 
+process.env.DISABLE_VULKAN = '1';
+process.env.DISABLE_GPU = '1';
+process.env.ELECTRON_DISABLE_GPU = '1';
+process.env.ELECTRON_NO_ASAR = '1'; // Помогает с некоторыми проблемами доступа к файлам
+
+// Перехватываем консольные сообщения для фильтрации ошибок Vulkan
+const originalConsoleError = console.error;
+console.error = function() {
+  // Фильтруем сообщения, связанные с Vulkan, ELFCLASS32 и ICD
+  const message = Array.prototype.join.call(arguments, ' ');
+  if (!message.includes('Vulkan') && 
+      !message.includes('ELFCLASS32') && 
+      !message.includes('ICD') &&
+      !message.includes('libvulkan')) {
+    originalConsoleError.apply(console, arguments);
+  }
+};
+
 let mainWindow;
 let pythonProcess = null;
 
@@ -232,8 +250,14 @@ ipcMain.handle('save-audio-to-directory', async (event, { audioPath, directoryPa
 // Отключаем аппаратное ускорение и устанавливаем другие флаги для предотвращения проблем с Vulkan
 app.disableHardwareAcceleration();
 app.commandLine.appendSwitch('disable-gpu');
-app.commandLine.appendSwitch('disable-software-rasterizer');
 app.commandLine.appendSwitch('disable-gpu-compositing');
+app.commandLine.appendSwitch('disable-webgl');
+app.commandLine.appendSwitch('disable-vulkan');
+app.commandLine.appendSwitch('ignore-gpu-blocklist');
+app.commandLine.appendSwitch('disable-accelerated-2d-canvas');
+app.commandLine.appendSwitch('disable-accelerated-video-decode');
+app.commandLine.appendSwitch('disable-gpu-memory-buffer-video-frames');
+app.commandLine.appendSwitch('use-gl', 'swiftshader');
 
 app.whenReady().then(async () => {
   if (autoStartPythonServer) {

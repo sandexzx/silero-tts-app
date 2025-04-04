@@ -10,7 +10,7 @@ class SileroTTSEngine:
         self.model_dir = model_dir
         self.language = language
         self.speaker = speaker
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device("cpu")
         self.model = None
         self.sample_rate = sample_rate
         
