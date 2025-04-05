@@ -115,28 +115,18 @@ async function startPythonServer() {
 }
 
 // Обработчик события: сохранить аудиофайл
-ipcMain.handle('save-audio-file', async (event, audioPath) => {
+ipcMain.handle('save-audio-file', async (event, filename) => {
   const result = await dialog.showSaveDialog(mainWindow, {
     title: 'Сохранить аудиофайл',
-    defaultPath: path.join(app.getPath('downloads'), 'audio.wav'),
+    defaultPath: path.join(app.getPath('downloads'), filename || 'audio.wav'),
     filters: [
       { name: 'Аудиофайлы', extensions: ['wav', 'mp3'] }
     ]
   });
 
   if (!result.canceled && result.filePath) {
-    // Проверяем путь - абсолютный или относительный
-    let srcPath = audioPath;
-    if (!path.isAbsolute(audioPath)) {
-      // Проверяем есть ли файл в бэкенде
-      const backendPath = path.join(__dirname, '..', 'backend', 'temp_audio', path.basename(audioPath));
-      if (fs.existsSync(backendPath)) {
-        srcPath = backendPath;
-      } else {
-        // Если нет в бэкенде, используем стандартный путь из констант
-        srcPath = path.join(require('../shared/constants').TEMP_AUDIO_DIR, path.basename(audioPath));
-      }
-    }
+    // Вместо прямого использования пути, строим путь к temp_audio
+    const srcPath = path.join(__dirname, '..', 'backend', 'temp_audio', filename);
     
     // Логируем для отладки
     console.log(`Копирую файл из ${srcPath} в ${result.filePath}`);

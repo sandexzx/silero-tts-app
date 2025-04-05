@@ -55,26 +55,33 @@ class ApiClient {
   
     async synthesize(text, speaker = 'xenia', sampleRate = 48000, useSSML = false) {
       try {
-          const response = await window.api.synthesize(text, speaker, sampleRate, useSSML);
-          
-          if (response.error) {
-              console.error("Ошибка от API:", response.error);
-              throw new Error(response.error);
-          }
-          
-          if (!response.filename) {
-              console.error("Некорректный ответ API:", response);
-              throw new Error("API вернул некорректный ответ без имени файла");
-          }
-          
-          this.lastSynthesisResult = response;
-          console.log("Синтез успешен:", response);
-          return response;
+        const response = await window.api.synthesize(text, speaker, sampleRate, useSSML);
+        
+        if (response.error) {
+          console.error("Ошибка от API:", response.error);
+          throw new Error(response.error);
+        }
+        
+        // Проверяем наличие имени файла
+        if (!response.filename) {
+          console.error("Некорректный ответ API:", response);
+          throw new Error("API вернул некорректный ответ без имени файла");
+        }
+        
+        // Обновляем объект response, чтобы он соответствовал ожидаемому формату
+        // но без использования абсолютных путей
+        this.lastSynthesisResult = {
+          filename: response.filename,
+          // Специально не сохраняем полный путь с файловой системы
+        };
+        
+        console.log("Синтез успешен, имя файла:", response.filename);
+        return this.lastSynthesisResult;
       } catch (error) {
-          console.error('Ошибка синтеза речи:', error);
-          throw error;
+        console.error('Ошибка синтеза речи:', error);
+        throw error;
       }
-  }
+    }
   
     async saveAudioFile() {
       if (!this.lastSynthesisResult || !this.lastSynthesisResult.path) {

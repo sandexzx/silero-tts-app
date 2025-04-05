@@ -85,7 +85,9 @@ async def synthesize_text(request: TTSRequest):
     try:
         # Генерируем уникальное имя файла
         filename = f"{uuid.uuid4()}.wav"
-        output_path = os.path.join(output_dir, filename)
+        
+        # Используем абсолютный путь и нормализуем слэши
+        output_path = os.path.abspath(os.path.join(output_dir, filename))
         
         # Синтезируем речь
         if request.use_ssml:
@@ -103,10 +105,10 @@ async def synthesize_text(request: TTSRequest):
                 sample_rate=request.sample_rate
             )
         
-        # Возвращаем путь к файлу для использования в Electron
-        return {"filename": filename, "path": output_path}
+        # Возвращаем только имя файла, а не полный путь
+        # Это позволит избежать проблем с путями Windows в JSON
+        return {"filename": filename}
     except Exception as e:
-        # Добавляем логирование для отладки
         import traceback
         print(f"Ошибка в synthesize_text: {str(e)}")
         print(traceback.format_exc())
@@ -115,12 +117,20 @@ async def synthesize_text(request: TTSRequest):
 @app.get("/audio/{filename}")
 async def get_audio(filename: str):
     """Получить аудиофайл по имени"""
-    file_path = os.path.join(output_dir, filename)
+    # Используем только имя файла без пути
+    file_path = os.path.abspath(os.path.join(output_dir, filename))
     print(f"Запрос аудиофайла: {filename}, полный путь: {file_path}")
+    
     if not os.path.exists(file_path):
         print(f"Файл не найден: {file_path}")
         raise HTTPException(status_code=404, detail="Файл не найден")
-    return FileResponse(file_path, media_type="audio/wav")
+    
+    # Используем стандартный путь, без нормализации
+    return FileResponse(
+        path=file_path, 
+        media_type="audio/wav",
+        filename=filename
+    )
 
 if __name__ == "__main__":
     uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)

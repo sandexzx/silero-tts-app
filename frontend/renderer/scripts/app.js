@@ -222,6 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Обновляем аудиоплеер и показываем панель
         const audioUrl = apiClient.getAudioUrl(result.filename);
         console.log("Ссылка на аудио:", audioUrl);
+        
         const player = document.getElementById('audio-player');
         player.src = audioUrl;
         player.load();

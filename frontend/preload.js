@@ -121,8 +121,15 @@ try {
       }
   },
     
-    saveAudioFile: async (audioPath) => {
-      return await ipcRenderer.invoke('save-audio-file', audioPath);
+    saveAudioFile: async (filename) => {
+      try {
+        // Вместо использования полного пути, который может вызвать проблемы в Windows,
+        // передаем только имя файла и позволяем main процессу построить корректный путь
+        return await ipcRenderer.invoke('save-audio-file', filename);
+      } catch (error) {
+        console.error("Ошибка сохранения файла:", error);
+        return null;
+      }
     },
     
     openDirectory: async (dirPath) => {
@@ -216,8 +223,15 @@ try {
       }
     },
     
-    saveAudioFile: async (audioPath) => {
-      return await ipcRenderer.invoke('save-audio-file', audioPath);
+    saveAudioFile: async (filename) => {
+      try {
+        // Вместо использования полного пути, который может вызвать проблемы в Windows,
+        // передаем только имя файла и позволяем main процессу построить корректный путь
+        return await ipcRenderer.invoke('save-audio-file', filename);
+      } catch (error) {
+        console.error("Ошибка сохранения файла:", error);
+        return null;
+      }
     },
     
     openDirectory: async (dirPath) => {
