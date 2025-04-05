@@ -68,11 +68,9 @@ class ApiClient {
           throw new Error("API вернул некорректный ответ без имени файла");
         }
         
-        // Обновляем объект response, чтобы он соответствовал ожидаемому формату
-        // но без использования абсолютных путей
         this.lastSynthesisResult = {
           filename: response.filename,
-          // Специально не сохраняем полный путь с файловой системы
+          path: response.filename // Теперь просто используем имя файла как путь
         };
         
         console.log("Синтез успешен, имя файла:", response.filename);
@@ -84,12 +82,12 @@ class ApiClient {
     }
   
     async saveAudioFile() {
-      if (!this.lastSynthesisResult || !this.lastSynthesisResult.path) {
+      if (!this.lastSynthesisResult || !this.lastSynthesisResult.filename) {
         throw new Error('Нет доступных аудиофайлов для сохранения');
       }
   
       try {
-        const savedPath = await window.api.saveAudioFile(this.lastSynthesisResult.path);
+        const savedPath = await window.api.saveAudioFile(this.lastSynthesisResult.filename);
         return savedPath;
       } catch (error) {
         console.error('Ошибка сохранения аудиофайла:', error);
@@ -129,7 +127,7 @@ class ApiClient {
     }
 
     async saveAudioToDirectory(directoryPath) {
-      if (!this.lastSynthesisResult || !this.lastSynthesisResult.path) {
+      if (!this.lastSynthesisResult || !this.lastSynthesisResult.filename) {
         throw new Error('Нет доступных аудиофайлов для сохранения');
       }
 

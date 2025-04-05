@@ -108,9 +108,8 @@ async def synthesize_text(request: TTSRequest):
                 sample_rate=request.sample_rate
             )
         
-        # Возвращаем только имя файла, а не полный путь
-        # Это позволит избежать проблем с путями Windows в JSON
-        return {"filename": filename}
+        # Возвращаем имя файла и относительный путь
+        return {"filename": filename, "path": filename}
     except Exception as e:
         import traceback
         print(f"Ошибка в synthesize_text: {str(e)}")
