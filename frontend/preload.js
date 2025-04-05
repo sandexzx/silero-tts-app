@@ -90,25 +90,36 @@ try {
     },
     
     synthesize: async (text, speaker, sampleRate, useSSML) => {
+      console.log(`Отправляю запрос по: ${API_ENDPOINTS.SYNTHESIZE_TEXT}`);
+      console.log(`Параметры: speaker=${speaker}, sampleRate=${sampleRate}, useSSML=${useSSML}`);
+      
       try {
-        const response = await fetch(API_ENDPOINTS.SYNTHESIZE_TEXT, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            text,
-            speaker,
-            sample_rate: sampleRate,
-            use_ssml: useSSML
-          }),
-        });
-        
-        return await response.json();
+          const response = await fetch(API_ENDPOINTS.SYNTHESIZE_TEXT, {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                  text,
+                  speaker,
+                  sample_rate: sampleRate,
+                  use_ssml: useSSML
+              }),
+          });
+          
+          if (!response.ok) {
+              const errorText = await response.text();
+              throw new Error(`HTTP ошибка ${response.status}: ${errorText}`);
+          }
+          
+          const data = await response.json();
+          console.log("Ответ от сервера:", data);
+          return data;
       } catch (error) {
-        return { error: error.message };
+          console.error("Критическая ошибка:", error);
+          return { error: error.message };
       }
-    },
+  },
     
     saveAudioFile: async (audioPath) => {
       return await ipcRenderer.invoke('save-audio-file', audioPath);

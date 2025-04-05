@@ -106,13 +106,19 @@ async def synthesize_text(request: TTSRequest):
         # Возвращаем путь к файлу для использования в Electron
         return {"filename": filename, "path": output_path}
     except Exception as e:
+        # Добавляем логирование для отладки
+        import traceback
+        print(f"Ошибка в synthesize_text: {str(e)}")
+        print(traceback.format_exc())
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/audio/{filename}")
 async def get_audio(filename: str):
     """Получить аудиофайл по имени"""
     file_path = os.path.join(output_dir, filename)
+    print(f"Запрос аудиофайла: {filename}, полный путь: {file_path}")
     if not os.path.exists(file_path):
+        print(f"Файл не найден: {file_path}")
         raise HTTPException(status_code=404, detail="Файл не найден")
     return FileResponse(file_path, media_type="audio/wav")
 

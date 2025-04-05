@@ -88,12 +88,20 @@ class SileroTTSEngine:
         
         # Если указан путь для сохранения
         if output_path:
-            torchaudio.save(
-                output_path,
-                audio.unsqueeze(0),
-                sample_rate=sr
-            )
-            return output_path
+            # Убедимся, что директория существует
+            os.makedirs(os.path.dirname(os.path.abspath(output_path)), exist_ok=True)
+            
+            try:
+                torchaudio.save(
+                    output_path,
+                    audio.unsqueeze(0),
+                    sample_rate=sr
+                )
+                print(f"Аудио сохранено по пути: {output_path}")
+                return output_path
+            except Exception as e:
+                print(f"Ошибка при сохранении аудио: {str(e)}")
+                raise e
         
         # Иначе возвращаем аудио данные
         return audio.cpu().numpy()

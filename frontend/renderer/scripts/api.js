@@ -55,19 +55,26 @@ class ApiClient {
   
     async synthesize(text, speaker = 'xenia', sampleRate = 48000, useSSML = false) {
       try {
-        const response = await window.api.synthesize(text, speaker, sampleRate, useSSML);
-        
-        if (response.error) {
-          throw new Error(response.error);
-        }
-        
-        this.lastSynthesisResult = response;
-        return response;
+          const response = await window.api.synthesize(text, speaker, sampleRate, useSSML);
+          
+          if (response.error) {
+              console.error("Ошибка от API:", response.error);
+              throw new Error(response.error);
+          }
+          
+          if (!response.filename) {
+              console.error("Некорректный ответ API:", response);
+              throw new Error("API вернул некорректный ответ без имени файла");
+          }
+          
+          this.lastSynthesisResult = response;
+          console.log("Синтез успешен:", response);
+          return response;
       } catch (error) {
-        console.error('Ошибка синтеза речи:', error);
-        throw error;
+          console.error('Ошибка синтеза речи:', error);
+          throw error;
       }
-    }
+  }
   
     async saveAudioFile() {
       if (!this.lastSynthesisResult || !this.lastSynthesisResult.path) {

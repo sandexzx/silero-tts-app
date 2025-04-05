@@ -10,10 +10,16 @@ DEFAULT_LANGUAGE = 'ru'
 DEFAULT_SPEAKER = 'xenia'
 DEFAULT_SAMPLE_RATE = 48000
 
-# Пути
-MODEL_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'models')
-OUTPUT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'temp_audio')
+# Проверка и нормализация путей для Windows
+def normalize_path(path):
+    # Нормализуем слеши в соответствии с ОС
+    normalized = os.path.normpath(path)
+    # Проверяем доступность и существование директории
+    dir_path = os.path.dirname(normalized)
+    if not os.path.exists(dir_path):
+        os.makedirs(dir_path, exist_ok=True)
+    return normalized
 
-# Создаем директории если их нет
-os.makedirs(MODEL_DIR, exist_ok=True)
-os.makedirs(OUTPUT_DIR, exist_ok=True)
+# Определение директорий с учетом особенностей Windows
+MODEL_DIR = normalize_path(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'models'))
+OUTPUT_DIR = normalize_path(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'temp_audio'))
