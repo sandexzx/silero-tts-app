@@ -52,7 +52,10 @@ async def synthesize(request: TTSRequest):
     try:
         # Генерируем уникальное имя файла
         filename = f"{uuid.uuid4()}.wav"
-        output_path = os.path.join(output_dir, filename)
+        # Нормализуем путь для Windows
+        output_path = os.path.abspath(os.path.join(output_dir, filename))
+        if os.name == 'nt':  # Проверка на Windows
+            output_path = output_path.replace('\\', '/')
         
         # Синтезируем речь
         if request.use_ssml:
@@ -121,16 +124,28 @@ async def get_audio(filename: str):
     file_path = os.path.abspath(os.path.join(output_dir, filename))
     print(f"Запрос аудиофайла: {filename}, полный путь: {file_path}")
     
-    if not os.path.exists(file_path):
-        print(f"Файл не найден: {file_path}")
-        raise HTTPException(status_code=404, detail="Файл не найден")
-    
-    # Используем стандартный путь, без нормализации
-    return FileResponse(
-        path=file_path, 
-        media_type="audio/wav",
-        filename=filename
-    )
+    # Проверка на существование файла и его доступность
+    try:
+        if not os.path.exists(file_path):
+            print(f"Файл не найден: {file_path}")
+            raise HTTPException(status_code=404, detail="Файл не найден")
+        
+        # Пробуем открыть файл для чтения, чтобы убедиться в доступности
+        with open(file_path, 'rb') as f:
+            # Просто проверяем, что можем прочитать первые байты
+            f.read(10)
+            f.seek(0)
+        
+        # Используем стандартный путь, без нормализации
+        return FileResponse(
+            path=file_path, 
+            media_type="audio/wav",
+            filename=filename
+        )
+    except PermissionError:
+        raise HTTPException(status_code=500, detail=f"Ошибка доступа к файлу: недостаточно прав")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Ошибка доступа к файлу: {str(e)}")
 
 if __name__ == "__main__":
     uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)
