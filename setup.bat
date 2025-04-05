@@ -1,73 +1,62 @@
 @echo off
-echo [*] Скрипт установки Silero TTS App
-echo [*] Проверяем нужный софт...
-
-REM Проверяем Python
+echo [*] Silero TTS App Setup Script
+echo [*] Checking required software...
+REM Check Python
 python --version >nul 2>&1
 if %ERRORLEVEL% NEQ 0 (
-    echo [!] Python не найден! Нужно установить Python 3.8 или выше
-    echo [!] Скачай его с https://www.python.org/downloads/
+    echo [!] Python not found! You need Python 3.8 or higher
+    echo [!] Download it from https://www.python.org/downloads/
     pause
     exit /b 1
 )
-
-REM Проверяем Node.js
+REM Check Node.js
 node --version >nul 2>&1
 if %ERRORLEVEL% NEQ 0 (
-    echo [!] Node.js не найден! Нужно установить Node.js 16 или выше
-    echo [!] Скачай его с https://nodejs.org/
+    echo [!] Node.js not found! You need Node.js 16 or higher
+    echo [!] Download it from https://nodejs.org/
     pause
     exit /b 1
 )
-
-REM Проверяем npm
+REM Check npm
 npm --version >nul 2>&1
 if %ERRORLEVEL% NEQ 0 (
-    echo [!] npm не найден! Должен быть установлен вместе с Node.js
+    echo [!] npm not found! Should be installed with Node.js
     pause
     exit /b 1
 )
-
-echo [+] Все необходимые программы найдены!
-echo [*] Устанавливаем зависимости Python...
-
-REM Создаем папку для моделей
+echo [+] All required programs found!
+echo [*] Installing Python dependencies...
+REM Create folders for models
 if not exist "backend\models" mkdir backend\models
 if not exist "backend\temp_audio" mkdir backend\temp_audio
-
-REM Устанавливаем зависимости Python
+REM Install Python dependencies
 pip install -r backend\requirements.txt
 if %ERRORLEVEL% NEQ 0 (
-    echo [!] Ошибка при установке Python-зависимостей
+    echo [!] Error installing Python dependencies
     pause
     exit /b 1
 )
-
-echo [+] Python-зависимости установлены!
-echo [*] Устанавливаем npm пакеты...
-
-REM Устанавливаем npm пакеты для корневого проекта
+echo [+] Python dependencies installed!
+echo [*] Installing npm packages...
+REM Install npm packages for root project
 npm install
 if %ERRORLEVEL% NEQ 0 (
-    echo [!] Ошибка при установке npm пакетов в корневой директории
+    echo [!] Error installing npm packages in root directory
     pause
     exit /b 1
 )
-
-echo [+] Корневые npm пакеты установлены!
-echo [*] Устанавливаем npm пакеты для фронтенда...
-
-REM Переходим в директорию frontend и устанавливаем npm пакеты
+echo [+] Root npm packages installed!
+echo [*] Installing npm packages for frontend...
+REM Navigate to frontend directory and install npm packages
 cd frontend
 npm install
 if %ERRORLEVEL% NEQ 0 (
-    echo [!] Ошибка при установке npm пакетов для фронтенда
+    echo [!] Error installing npm packages for frontend
     cd ..
     pause
     exit /b 1
 )
-
-echo [+] Все зависимости установлены успешно!
-echo [*] Теперь можно запускать приложение через run.bat
+echo [+] All dependencies successfully installed!
+echo [*] You can now run the application using run.bat
 cd ..
 pause

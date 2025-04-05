@@ -1,23 +1,19 @@
 @echo off
-echo [*] Запускаем Silero TTS App...
-
-REM Проверяем, что всё необходимое установлено
+echo [*] Launching Silero TTS App...
+REM Checking if everything needed is installed
 if not exist "node_modules" (
-    echo [!] Кажется, зависимости не установлены
-    echo [!] Сначала запустите setup.bat
+    echo [!] Seems like dependencies aren't installed
+    echo [!] Please run setup.bat first
     pause
     exit /b 1
 )
-
-REM Запускаем приложение
-echo [*] Запускаем backend и frontend...
+REM Starting the application
+echo [*] Launching backend and frontend...
 npm start
-
-REM В случае ошибки
+REM In case of error
 if %ERRORLEVEL% NEQ 0 (
-    echo [!] Произошла ошибка при запуске приложения
+    echo [!] An error occurred while launching the application
     pause
     exit /b 1
 )
-
 pause
