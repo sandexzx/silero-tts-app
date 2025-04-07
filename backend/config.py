@@ -17,7 +17,11 @@ def normalize_path(path):
     # Проверяем доступность и существование директории
     dir_path = os.path.dirname(normalized)
     if not os.path.exists(dir_path):
-        os.makedirs(dir_path, exist_ok=True)
+        try:
+            os.makedirs(dir_path, exist_ok=True)
+            print(f"Создана директория: {dir_path}")
+        except Exception as e:
+            print(f"Ошибка создания директории {dir_path}: {str(e)}")
     return normalized
 
 # Определение директорий с учетом особенностей Windows

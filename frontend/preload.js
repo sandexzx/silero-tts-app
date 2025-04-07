@@ -29,6 +29,7 @@ try {
 
     synthesizeAndSave: async (text, speaker, sampleRate, useSSML) => {
       try {
+        console.log("Начинаем синтез и сохранение");
         // Сначала синтезируем
         const result = await fetch(API_ENDPOINTS.SYNTHESIZE_TEXT, {
           method: 'POST',
@@ -43,15 +44,22 @@ try {
           }),
         });
         
+        if (!result.ok) {
+          const errorText = await result.text();
+          throw new Error(`Ошибка сервера ${result.status}: ${errorText}`);
+        }
+        
         const data = await result.json();
+        console.log("Получен ответ от сервера:", data);
         
         // Если успешно, сразу сохраняем
         if (data.filename && data.path) {
           return await ipcRenderer.invoke('save-audio-file', data.path);
         } else {
-          throw new Error("Синтез не вернул корректных данных");
+          throw new Error("Синтез не вернул данные о файле");
         }
       } catch (error) {
+        console.error("Ошибка при синтезе и сохранении:", error);
         return { error: error.message };
       }
     },

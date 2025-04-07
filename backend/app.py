@@ -108,8 +108,13 @@ async def synthesize_text(request: TTSRequest):
                 sample_rate=request.sample_rate
             )
         
+        # Проверим, создан ли файл
+        if not os.path.exists(output_path):
+            raise FileNotFoundError(f"Файл не был создан: {output_path}")
+            
         # Возвращаем имя файла и относительный путь
-        return {"filename": filename, "path": filename}
+        relative_path = os.path.join(output_dir, filename)
+        return {"filename": filename, "path": relative_path}
     except Exception as e:
         import traceback
         print(f"Ошибка в synthesize_text: {str(e)}")
@@ -120,7 +125,12 @@ async def synthesize_text(request: TTSRequest):
 async def get_audio(filename: str):
     """Получить аудиофайл по имени"""
     # Используем только имя файла без пути
-    file_path = os.path.abspath(os.path.join(output_dir, filename))
+    # Нормализуем путь правильно для любой ОС
+    file_path = os.path.normpath(os.path.abspath(os.path.join(output_dir, filename)))
+    # Добавим лог
+    print(f"Запрос аудиофайла: {filename}")
+    print(f"Полный путь к файлу: {file_path}")
+    print(f"Директория существует: {os.path.exists(output_dir)}")
     print(f"Запрос аудиофайла: {filename}, полный путь: {file_path}")
     
     # Проверка на существование файла и его доступность

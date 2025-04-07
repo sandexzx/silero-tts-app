@@ -68,10 +68,16 @@ class ApiClient {
           throw new Error("API вернул некорректный ответ без имени файла");
         }
         
-        this.lastSynthesisResult = {
-          filename: response.filename,
-          path: response.filename // Теперь просто используем имя файла как путь
-        };
+        // Проверяем, что ответ содержит и имя файла и путь
+        if (response.filename && response.path) {
+          this.lastSynthesisResult = {
+            filename: response.filename,
+            path: response.path
+          };
+        } else {
+          console.error("API вернул некорректный ответ:", response);
+          throw new Error("API вернул ответ без нужных данных о файле");
+        }
         
         console.log("Синтез успешен, имя файла:", response.filename);
         return this.lastSynthesisResult;
