@@ -19,7 +19,7 @@ module.exports = {
   DEFAULT_SPEAKER: 'xenia',
   DEFAULT_SAMPLE_RATE: 48000,
   SAMPLE_RATES: [8000, 24000, 48000],
-  TEMP_AUDIO_DIR: path.join(__dirname, '..', 'backend', 'temp_audio'),
+  TEMP_AUDIO_DIR: path.join(process.cwd(), 'backend', 'temp_audio'),
   THEMES: {
     LIGHT: 'light',
     DARK: 'dark'

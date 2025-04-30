@@ -60,23 +60,23 @@ function createWindow() {
 }
 
 async function startPythonServer() {
-  console.log("Пытаюсь проверить сервер по адресу:", API_ENDPOINTS.HEALTH);
+  console.log("Checking server at address:", API_ENDPOINTS.HEALTH);
   
   try {
     const response = await axios.get(API_ENDPOINTS.HEALTH, { timeout: 2000 });
-    console.log("Ответ сервера:", response.data);
+    console.log("Server response:", response.data);
     if (response.data.status === 'ok') {
-      console.log('Python сервер уже запущен');
+      console.log('Python server is already running');
       return true;
     }
   } catch (error) {
-    console.error('Ошибка при проверке сервера:', error.message);
+    console.error('Error checking server:', error.message);
   }
 
-  // Определяем путь к Python-скрипту
+  // Define path to Python script
   const scriptPath = path.join(__dirname, '..', 'backend', 'app.py');
   
-  // Запускаем Python-сервер
+  // Start Python server
   pythonProcess = spawn('python', [scriptPath], {
     stdio: 'pipe'
   });
@@ -94,23 +94,23 @@ async function startPythonServer() {
     pythonProcess = null;
   });
 
-  // Ждем, пока сервер запустится
+  // Wait for server to start
   let attempts = 0;
   while (attempts < 30) {
     try {
       const response = await axios.get(API_ENDPOINTS.HEALTH);
       if (response.data.status === 'ok') {
-        console.log('Python сервер успешно запущен');
+        console.log('Python server started successfully');
         return true;
       }
     } catch (error) {
-      // Ждем 1 секунду перед следующей попыткой
+      // Wait 1 second before next attempt
       await new Promise(resolve => setTimeout(resolve, 1000));
       attempts++;
     }
   }
 
-  console.error('Не удалось запустить Python сервер');
+  console.error('Failed to start Python server');
   return false;
 }
 
@@ -143,8 +143,13 @@ ipcMain.handle('save-audio-file', async (event, audioPath) => {
     
     // Проверяем существование исходного файла
     if (!fs.existsSync(srcPath)) {
-      console.error(`Аудиофайл не найден: ${srcPath}`);
-      throw new Error(`Аудиофайл не найден по пути: ${srcPath}`);
+      // Если файл не найден, пробуем найти его в другом месте
+      const alternativePath = path.join(__dirname, '..', 'backend', 'temp_audio', path.basename(audioPath));
+      if (fs.existsSync(alternativePath)) {
+        srcPath = alternativePath;
+      } else {
+        throw new Error(`Audio file not found: ${srcPath}`);
+      }
     }
     
     // Копируем файл
@@ -224,25 +229,30 @@ ipcMain.handle('save-audio-to-directory', async (event, { audioPath, directoryPa
     let srcPath = audioPath;
     if (!path.isAbsolute(audioPath)) {
       // Проверяем есть ли файл в бэкенде
-      const backendPath = path.join(__dirname, '..', 'backend', 'temp_audio', path.basename(audioPath));
+      const backendPath = path.join(process.cwd(), 'backend', 'temp_audio', path.basename(audioPath));
       if (fs.existsSync(backendPath)) {
         srcPath = backendPath;
       } else {
-        // Если нет в бэкенде, используем стандартный путь из констант
-        srcPath = path.join(require('../shared/constants').TEMP_AUDIO_DIR, path.basename(audioPath));
+        // Если нет в бэкенде, пробуем найти в директории приложения
+        const appPath = path.join(process.cwd(), 'temp_audio', path.basename(audioPath));
+        if (fs.existsSync(appPath)) {
+          srcPath = appPath;
+        } else {
+          throw new Error(`Audio file not found: ${audioPath}`);
+        }
       }
     }
     
     // Проверяем существование исходного файла
     if (!fs.existsSync(srcPath)) {
-      throw new Error(`Аудиофайл не найден: ${srcPath}`);
+      throw new Error(`Audio file not found: ${srcPath}`);
     }
     
     // Копируем файл
     fs.copyFileSync(srcPath, destPath);
     return { success: true, path: destPath };
   } catch (error) {
-    console.error('Ошибка при сохранении в директорию:', error);
+    console.error('Error saving to directory:', error);
     return { success: false, error: error.message };
   }
 });
@@ -275,7 +285,7 @@ app.whenReady().then(async () => {
 
 // Обработка ошибок, связанных с GPU
 app.on('render-process-gone', (event, webContents, details) => {
-  console.log('Render процесс ушёл:', details.reason);
+  console.log('Render process gone:', details.reason);
 });
 
 app.on('window-all-closed', () => {

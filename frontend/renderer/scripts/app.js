@@ -33,11 +33,11 @@ document.addEventListener('DOMContentLoaded', () => {
     init();
   
     async function init() {
-      // Проверка существования apiClient  
+      // Check if apiClient exists
       if (typeof apiClient === 'undefined') {
-        console.error("❌ apiClient не определен! Создаю запасной экземпляр");
+        console.error("❌ apiClient is not defined! Creating fallback instance");
         window.apiClient = new ApiClient();
-        // Используем глобальный объект для доступа отовсюду
+        // Use global object for access from anywhere
       }
       
       await checkServerStatus();
@@ -47,10 +47,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
       loadSaveDirectory();
       
-      // Устанавливаем обработчики событий
+      // Set up event listeners
       setupEventListeners();
       
-      // Периодически проверяем статус сервера
+      // Periodically check server status
       setInterval(checkServerStatus, 10000);
     }
 
@@ -59,31 +59,31 @@ document.addEventListener('DOMContentLoaded', () => {
         saveDirectoryPath = await apiClient.getSaveDirectory();
         updateSaveDirectoryDisplay();
       } catch (error) {
-        console.error('Ошибка загрузки пути сохранения:', error);
+        console.error('Error loading save path:', error);
       }
     }
 
     function updateSaveDirectoryDisplay() {
       if (saveDirectoryPath) {
         saveDirDisplay.value = saveDirectoryPath;
-        // Включаем прямое сохранение, если директория выбрана
+        // Enable direct save if directory is selected
         synthesizeSaveBtn.disabled = !isServerOnline;
       } else {
         saveDirDisplay.value = '';
-        saveDirDisplay.placeholder = 'Не выбрана';
+        saveDirDisplay.placeholder = 'Not selected';
       }
     }
   
     async function checkServerStatus() {
       try {
         if (typeof apiClient === 'undefined') {
-          console.error("❌ apiClient все еще не определен в checkServerStatus");
+          console.error("❌ apiClient is still not defined in checkServerStatus");
           isServerOnline = false;
           return;
         }
         isServerOnline = await apiClient.checkServerStatus();
       } catch (error) {
-        console.error("💣 Ошибка проверки статуса:", error);
+        console.error("💣 Error checking status:", error);
         isServerOnline = false;
       }
       updateServerStatus();
@@ -93,13 +93,13 @@ document.addEventListener('DOMContentLoaded', () => {
       if (isServerOnline) {
         statusDot.classList.remove('offline');
         statusDot.classList.add('online');
-        statusText.textContent = 'Сервер активен';
+        statusText.textContent = 'Server active';
         synthesizeBtn.disabled = false;
         synthesizeSaveBtn.disabled = false; 
       } else {
         statusDot.classList.remove('online');
         statusDot.classList.add('offline');
-        statusText.textContent = 'Сервер недоступен';
+        statusText.textContent = 'Server unavailable';
         synthesizeBtn.disabled = true;
         synthesizeSaveBtn.disabled = true;
       }
@@ -108,11 +108,11 @@ document.addEventListener('DOMContentLoaded', () => {
     async function loadSpeakers() {
       const speakers = await apiClient.getSpeakers();
       
-      // Очищаем выпадающий список
+      // Clear dropdown
       speakerSelect.innerHTML = '';
       
       if (speakers && speakers.length > 0) {
-        // Добавляем опции для каждого спикера
+        // Add options for each speaker
         speakers.forEach(speaker => {
           const option = document.createElement('option');
           option.value = speaker;
@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         const option = document.createElement('option');
         option.value = '';
-        option.textContent = 'Нет доступных голосов';
+        option.textContent = 'No voices available';
         speakerSelect.appendChild(option);
         speakerSelect.disabled = true;
       }
@@ -155,10 +155,10 @@ document.addEventListener('DOMContentLoaded', () => {
           if (result && result.success) {
             saveDirectoryPath = result.path;
             updateSaveDirectoryDisplay();
-            showNotification(`Директория установлена: ${result.path}`, 'success');
+            showNotification(`Directory set: ${result.path}`, 'success');
           }
         } catch (error) {
-          showNotification(`Ошибка выбора директории: ${error.message}`, 'error');
+          showNotification(`Error selecting directory: ${error.message}`, 'error');
         }
       });
 
@@ -204,14 +204,14 @@ document.addEventListener('DOMContentLoaded', () => {
       
       const text = activeTab === 'text' ? textInput.value : ssmlInput.value;
       if (!text.trim()) {
-        showNotification('Пожалуйста, введите текст для синтеза', 'error');
+        showNotification('Please enter text for synthesis', 'error');
         return;
       }
       
       try {
         isProcessing = true;
         synthesizeBtn.disabled = true;
-        synthesizeBtn.textContent = 'Синтезируем...';
+        synthesizeBtn.textContent = 'Synthesizing...';
         
         const speaker = speakerSelect.value;
         const sampleRate = parseInt(sampleRateSelect.value);
@@ -230,13 +230,13 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         playerPanel.classList.remove('hidden');
         
-        showNotification('Синтез успешно завершен!', 'success');
+        showNotification('Synthesis completed successfully!', 'success');
       } catch (error) {
-        showNotification(`Ошибка синтеза: ${error.message}`, 'error');
+        showNotification(`Synthesis error: ${error.message}`, 'error');
       } finally {
         isProcessing = false;
         synthesizeBtn.disabled = false;
-        synthesizeBtn.textContent = 'Синтезировать';
+        synthesizeBtn.textContent = 'Synthesize';
       }
     }
   
@@ -252,10 +252,10 @@ document.addEventListener('DOMContentLoaded', () => {
       try {
         const savedPath = await apiClient.saveAudioFile();
         if (savedPath) {
-          showNotification(`Файл успешно сохранен: ${savedPath}`, 'success');
+          showNotification(`File saved successfully: ${savedPath}`, 'success');
         }
       } catch (error) {
-        showNotification(`Ошибка сохранения: ${error.message}`, 'error');
+        showNotification(`Save error: ${error.message}`, 'error');
       }
     }
   
@@ -285,13 +285,13 @@ document.addEventListener('DOMContentLoaded', () => {
       
       // Проверяем, задана ли директория для сохранения
       if (!saveDirectoryPath) {
-        showNotification('Пожалуйста, выберите директорию для сохранения', 'error');
+        showNotification('Please select a directory to save', 'error');
         return;
       }
       
       const text = activeTab === 'text' ? textInput.value : ssmlInput.value;
       if (!text.trim()) {
-        showNotification('Пожалуйста, введите текст для синтеза', 'error');
+        showNotification('Please enter text for synthesis', 'error');
         return;
       }
       
@@ -299,7 +299,7 @@ document.addEventListener('DOMContentLoaded', () => {
         isProcessing = true;
         synthesizeBtn.disabled = true;
         synthesizeSaveBtn.disabled = true;
-        synthesizeSaveBtn.textContent = 'Обрабатываем...';
+        synthesizeSaveBtn.textContent = 'Processing...';
         
         const speaker = speakerSelect.value;
         const sampleRate = parseInt(sampleRateSelect.value);
@@ -312,17 +312,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const saveResult = await window.api.saveAudioToDirectory(result.path, saveDirectoryPath);
         
         if (saveResult && saveResult.success) {
-          showNotification(`Файл сохранен в выбранную директорию: ${saveResult.path}`, 'success');
+          showNotification(`File saved in selected directory: ${saveResult.path}`, 'success');
         } else {
-          throw new Error(saveResult.error || 'Не удалось сохранить файл');
+          throw new Error(saveResult.error || 'Failed to save file');
         }
       } catch (error) {
-        showNotification(`Ошибка при синтезе и сохранении: ${error.message}`, 'error');
+        showNotification(`Synthesis and save error: ${error.message}`, 'error');
       } finally {
         isProcessing = false;
         synthesizeBtn.disabled = false;
         synthesizeSaveBtn.disabled = !saveDirectoryPath;
-        synthesizeSaveBtn.textContent = 'Синтезировать и сохранить';
+        synthesizeSaveBtn.textContent = 'Synthesize and save';
       }
     }
 
@@ -332,12 +332,12 @@ document.addEventListener('DOMContentLoaded', () => {
       
       if (textCounter) {
         const charCount = textInput.value.length;
-        textCounter.textContent = `${charCount} символов`;
+        textCounter.textContent = `${charCount} characters`;
       }
       
       if (ssmlCounter) {
         const charCount = ssmlInput.value.length;
-        ssmlCounter.textContent = `${charCount} символов`;
+        ssmlCounter.textContent = `${charCount} characters`;
       }
     }
     
@@ -380,10 +380,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
           }
           updateCharCounter();
-          showNotification(`Текст загружен из ${result.filePath}`, 'success');
+          showNotification(`Text loaded from ${result.filePath}`, 'success');
         }
       } catch (error) {
-        showNotification(`Ошибка при загрузке: ${error.message}`, 'error');
+        showNotification(`Load error: ${error.message}`, 'error');
       }
     }
     

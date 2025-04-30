@@ -14,32 +14,32 @@ class SileroTTSEngine:
         self.model = None
         self.sample_rate = sample_rate
         
-        # Убедимся, что директория для моделей существует
+        # Make sure model directory exists
         os.makedirs(model_dir, exist_ok=True)
         
-        # Загрузим модель (скачает если нужно)
+        # Load model (download if needed)
         self._load_model()
     
     def _load_model(self):
-        """Загружает модель или скачивает, если её нет"""
-        print(f"Загрузка модели Silero TTS v4 ({self.language}) на {self.device}...")
+        """Load model or download if not present"""
+        print(f"Loading Silero TTS v4 model ({self.language}) on {self.device}...")
         
-        # Путь к модели
+        # Model path
         model_path = os.path.join(self.model_dir, f"v4_{self.language}.pt")
         
-        # Скачиваем модель, если её нет
+        # Download model if not present
         if not os.path.isfile(model_path):
-            print("Модель не найдена, скачиваю...")
+            print("Model not found, downloading...")
             torch.hub.download_url_to_file(
                 f'https://models.silero.ai/models/tts/{self.language}/v4_{self.language}.pt',
                 model_path
             )
         
-        # Загрузка модели
+        # Load model
         self.model = torch.package.PackageImporter(model_path).load_pickle("tts_models", "model")
         self.model.to(self.device)
         
-        print(f"Модель загружена успешно! Доступные спикеры: {self.model.speakers}")
+        print(f"Model loaded successfully! Available speakers: {self.model.speakers}")
     
     def get_available_speakers(self):
         """Возвращает список доступных голосов"""

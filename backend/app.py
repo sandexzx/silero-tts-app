@@ -8,22 +8,22 @@ import uuid
 import uvicorn
 from tts_engine import SileroTTSEngine
 
-app = FastAPI(title="Silero TTS API", description="API для синтеза речи с использованием Silero TTS")
+app = FastAPI(title="Silero TTS API", description="API for speech synthesis using Silero TTS")
 
-# Добавляем CORS, чтобы Electron мог обращаться к API
+# Add CORS to allow Electron to access the API
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # В продакшене лучше ограничить конкретным доменом
+    allow_origins=["*"],  # In production, it's better to limit to specific domain
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Инициализируем движок синтеза речи
+# Initialize speech synthesis engine
 tts_engine = SileroTTSEngine(model_dir="models", language="ru", speaker="xenia")
 
-# Папка для временных аудиофайлов
-output_dir = "temp_audio"
+# Directory for temporary audio files
+output_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "temp_audio")
 os.makedirs(output_dir, exist_ok=True)
 
 class TTSRequest(BaseModel):
@@ -37,12 +37,12 @@ class SpeakerListResponse(BaseModel):
 
 @app.get("/health")
 def health_check():
-    """Проверка работоспособности API"""
+    """API health check"""
     return {"status": "ok"}
 
 @app.get("/speakers", response_model=SpeakerListResponse)
 def get_speakers():
-    """Получить список доступных голосов"""
+    """Get list of available voices"""
     speakers = tts_engine.get_available_speakers()
     return {"speakers": speakers}
 
@@ -113,7 +113,7 @@ async def get_audio(filename: str):
     """Получить аудиофайл по имени"""
     file_path = os.path.join(output_dir, filename)
     if not os.path.exists(file_path):
-        raise HTTPException(status_code=404, detail="Файл не найден")
+        raise HTTPException(status_code=404, detail="File not found")
     return FileResponse(file_path, media_type="audio/wav")
 
 if __name__ == "__main__":
